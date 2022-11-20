@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">BeGuest</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <!-- Strings for On Boarding Screen -->
+
+    <!--Titles-->
+    <string name="first_slide_title">Find and organize parties</string>
+    <string name="second_slide_title">Share party location with your friends</string>
+    <string name="third_slide_title">Get drunk</string>
+
+    <!--Descriptions-->
+    <string name="first_slide_desc">Party all day, party all night. Say you wanna party lets party alrigth</string>
+    <string name="second_slide_desc">Im hella straight, and I just got paid, Imma hit the club, and Imma get laid</string>
+    <string name="third_slide_desc">Yes, madam, I am drunk. But in the morning I will be sober and you will still be ugly.\nWinston Churchill</string>
+
+    <!--Buttons-->
+    <string name="skip_btn">Skip</string>
+    <string name="next_btn">Next</string>
+    <string name="back_btn">Back</string>
+    <string name="let_get_started">Get Started</string>
+    <string name="title_activity_login">Login</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+</resources>

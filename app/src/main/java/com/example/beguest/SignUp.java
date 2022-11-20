@@ -1,0 +1,126 @@
+package com.example.beguest;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.Patterns;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec;
+import com.google.android.material.progressindicator.IndeterminateDrawable;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.regex.Pattern;
+
+import kotlin.properties.ReadWriteProperty;
+
+public class SignUp extends AppCompatActivity {
+
+    TextView accountBtn;
+    EditText editTextuserEmail, editTextuserName, editTextuserPass;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sign_up);
+
+        //btns
+        accountBtn = findViewById(R.id.have_account_btn);
+        MaterialButton signUpBtn = findViewById(R.id.sign_up_btn);
+
+        CircularProgressIndicatorSpec spec = new CircularProgressIndicatorSpec(this, null, 0, com.google.android.material.R.style.Widget_Material3_CircularProgressIndicator_ExtraSmall);
+        IndeterminateDrawable<CircularProgressIndicatorSpec> progressIndicatorDrawable = IndeterminateDrawable.createCircularDrawable(this, spec);
+        progressIndicatorDrawable.setColorFilter(getResources().getColor(R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
+
+        //editTexts
+        editTextuserEmail = findViewById(R.id.userEmail);
+        editTextuserName = findViewById(R.id.userUsername);
+        editTextuserPass = findViewById(R.id.userPassword);
+
+        //sign up btn
+        signUpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email = editTextuserEmail.getText().toString();
+                String username = editTextuserName.getText().toString();
+                String password = editTextuserPass.getText().toString();
+
+                if(TextUtils.isEmpty(email)){
+                    Toast.makeText(SignUp.this, "Invalid email", Toast.LENGTH_LONG).show();
+                    editTextuserEmail.setError("Email is required");
+                    editTextuserEmail.requestFocus();
+                }else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                    Toast.makeText(SignUp.this, "Invalid email", Toast.LENGTH_LONG).show();
+                    editTextuserEmail.setError("Valid email is required");
+                    editTextuserEmail.requestFocus();
+                } else if(TextUtils.isEmpty(username)){
+                    Toast.makeText(SignUp.this, "Invalid username", Toast.LENGTH_SHORT).show();
+                    editTextuserName.setError("Username is required");
+                    editTextuserName.requestFocus();
+                }else if(TextUtils.isEmpty(password)){
+                    Toast.makeText(SignUp.this, "Invalid password", Toast.LENGTH_LONG).show();
+                    editTextuserPass.setError("Password is required");
+                    editTextuserPass.requestFocus();
+                }else if(password.length() < 5){
+                    Toast.makeText(SignUp.this, "Invalid password", Toast.LENGTH_LONG).show();
+                    editTextuserPass.setError("Password has to have at least 6 digits");
+                    editTextuserPass.requestFocus();
+                } else {
+                    signUpBtn.setText(null);
+                    signUpBtn.setIcon(progressIndicatorDrawable);
+                    registerUser(email, username, password, signUpBtn, progressIndicatorDrawable);
+                }
+            }
+        });
+
+        //already have account button (Login)
+        accountBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent login = new Intent(SignUp.this, Login.class);
+                startActivity(login);
+                finish();
+            }
+        });
+    }
+
+    //register user in firebase
+    private void registerUser(String email, String username, String password, MaterialButton signUpBtn, IndeterminateDrawable progressIndicatorDrawable) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignUp.this,
+                new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(SignUp.this, "User Registred successfully", Toast.LENGTH_SHORT).show();
+
+                            //save user information into Realtime database
+                            ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(username, createdEvents, registredEvents);
+
+                            //start new activity
+                            Intent intent = new Intent(SignUp.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }else{
+                            signUpBtn.setText("Sign Up");
+                            signUpBtn.setIcon(null);
+                            Toast.makeText(SignUp.this, "Something went wrong. Try again", Toast.LENGTH_SHORT).show();
+                            Log.d("ERROR", task.getException().getMessage());
+                        }
+                    }
+        });
+    }
+}
