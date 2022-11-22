@@ -30,8 +30,13 @@ import com.google.android.material.progressindicator.IndeterminateDrawable;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.core.Tag;
 
 import java.util.regex.Pattern;
 
@@ -132,20 +137,42 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(SignUp.this, "User Registred successfully", Toast.LENGTH_SHORT).show();
+                            //get current user id
+                            FirebaseUser user = auth.getCurrentUser();
+
+                            //Extrating User reference from database for registered users
+                            DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app").getReference("Registered Users");
 
                             //save user information into Realtime database
-                            //ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(username, createdEvents, registredEvents);
+                            ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(username);
 
-                            //start new activity
-                            Intent intent = new Intent(SignUp.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            reference.child(user.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Toast.makeText(SignUp.this, "User Registred successfully", Toast.LENGTH_SHORT).show();
+
+                                        //start new activity
+                                        Intent intent = new Intent(SignUp.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }else {
+                                        Toast.makeText(SignUp.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                                        Log.d("Error", task.getException().getMessage());
+                                    }
+                                }
+                            });
                         }else{
                             signUpBtn.setText("Sign Up");
                             signUpBtn.setIcon(null);
-                            Toast.makeText(SignUp.this, "Something went wrong. Try again", Toast.LENGTH_SHORT).show();
-                            Log.d("ERROR", task.getException().getMessage());
+                            try {
+                                throw task.getException();
+                            }catch (FirebaseAuthUserCollisionException e){
+                                editTextuserPass.setError("Email already in use");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.d("ERROR", e.getMessage());
+                            }
                         }
                     }
         });
@@ -184,6 +211,7 @@ public class SignUp extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d("USER:", user.getEmail());
         if(user!= null){
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
