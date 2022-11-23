@@ -211,7 +211,7 @@ public class SignUp extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Log.d("USER:", user.getEmail());
+//        Log.d("USER:", user.getEmail());
         if(user!= null){
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
