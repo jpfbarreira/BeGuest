@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.beguest"
-        minSdk 21
+        minSdk 23
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -51,6 +51,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     implementation 'com.google.android.gms:play-services-auth:20.4.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation "com.google.android.gms:play-services-maps:18.1.0"
+    implementation 'com.github.ismaeldivita:chip-navigation-bar:1.4.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:'
+
 }
 

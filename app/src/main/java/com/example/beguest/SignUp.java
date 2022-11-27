@@ -7,12 +7,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +50,7 @@ public class SignUp extends AppCompatActivity {
     TextView accountBtn;
     EditText editTextuserEmail, editTextuserName, editTextuserPass;
     ImageButton googlebtn;
+
     private GoogleSignInClient client;
 
     @Override
@@ -74,6 +78,23 @@ public class SignUp extends AppCompatActivity {
                 .build();
         client = GoogleSignIn.getClient(this, options);
 
+        ImageView showHidePwd = findViewById(R.id.show_hide_pwd);
+        showHidePwd.setImageResource(R.drawable.eye_password_show);
+        showHidePwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(editTextuserPass.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())){
+                    //if pass visible the hide
+                    editTextuserPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    //change icon
+                    showHidePwd.setImageResource(R.drawable.eye_password_show);
+                }else {
+                    editTextuserPass.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    showHidePwd.setImageResource(R.drawable.eye_password_hide);
+                }
+            }
+        });
+
         //sign up btn
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +102,9 @@ public class SignUp extends AppCompatActivity {
                 String email = editTextuserEmail.getText().toString();
                 String username = editTextuserName.getText().toString();
                 String password = editTextuserPass.getText().toString();
+                String instagram = "";
+                String twitter = "";
+                int points = 0;
 
                 if(TextUtils.isEmpty(email)){
                     Toast.makeText(SignUp.this, "Invalid email", Toast.LENGTH_LONG).show();
@@ -105,7 +129,7 @@ public class SignUp extends AppCompatActivity {
                 } else {
                     signUpBtn.setText(null);
                     signUpBtn.setIcon(progressIndicatorDrawable);
-                    registerUser(email, username, password, signUpBtn, progressIndicatorDrawable);
+                    registerUser(email, username, points, instagram, twitter,password, signUpBtn, progressIndicatorDrawable);
                 }
             }
         });
@@ -130,7 +154,7 @@ public class SignUp extends AppCompatActivity {
 
     }
 
-    private void registerUser(String email, String username, String password, MaterialButton signUpBtn, IndeterminateDrawable progressIndicatorDrawable) {
+    private void registerUser(String email, String username, int points, String instagram, String twitter, String password, MaterialButton signUpBtn, IndeterminateDrawable progressIndicatorDrawable) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignUp.this,
                 new OnCompleteListener<AuthResult>() {
@@ -144,7 +168,7 @@ public class SignUp extends AppCompatActivity {
                             DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app").getReference("Registered Users");
 
                             //save user information into Realtime database
-                            ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(username);
+                            ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(username, points, instagram, twitter);
 
                             reference.child(user.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -194,8 +218,35 @@ public class SignUp extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
-                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                                    startActivity(intent);
+                                    String instagram = "";
+                                    String twitter = "";
+                                    int points = 0;
+
+                                    FirebaseAuth auth = FirebaseAuth.getInstance();
+                                    //get current user id
+                                    FirebaseUser user = auth.getCurrentUser();
+
+                                    //Extrating User reference from database for registered users
+                                    DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app").getReference("Registered Users");
+
+                                    //save user information into Realtime database
+                                    ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(account.getDisplayName(), points, instagram, twitter);
+                                    reference.child(user.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Toast.makeText(SignUp.this, "User Registred successfully", Toast.LENGTH_SHORT).show();
+
+                                                //start new activity
+                                                Intent intent = new Intent(SignUp.this, MainActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }else {
+                                                Toast.makeText(SignUp.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                                                Log.d("Error", task.getException().getMessage());
+                                            }
+                                        }
+                                    });
                                 } else {
                                     Toast.makeText(SignUp.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -210,12 +261,30 @@ public class SignUp extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        Log.d("USER:", user.getEmail());
-        if(user!= null){
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-        }
-    }
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                Intent intent;
+                if (user == null){
+                    intent = new Intent(SignUp.this, Login.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else {
+                    if(user!= null){
+                        intent = new Intent(SignUp.this, MainActivity.class);
+                    }else {
+                        intent = new Intent(SignUp.this, Login.class);
+                    }
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        };
+
+
+    }
 }
