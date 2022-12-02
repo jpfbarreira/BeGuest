@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/home_svgrepo_com"
         app:cnb_iconColor="#fff"
         app:cnb_backgroundColor="@color/red"
         app:cnb_textColor="#fff"
@@ -15,19 +15,19 @@
 
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:icon="@drawable/ic_lightning"
         app:cnb_iconColor="#fff"
         app:cnb_backgroundColor="@color/red"
         app:cnb_textColor="#fff"
-        android:title="@string/title_dashboard" />
+        android:title="Events" />
 
     <item
         android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_notifications_black_24dp"
+        android:icon="@drawable/ic_baseline_location_on_24"
         app:cnb_iconColor="#fff"
         app:cnb_backgroundColor="@color/red"
         app:cnb_textColor="#fff"
-        android:title="@string/title_notifications" />
+        android:title="Map" />
     <item
         android:id="@+id/user_profile"
         android:icon="@drawable/default_profile_photo_icon"

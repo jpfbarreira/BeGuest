@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
@@ -12,6 +14,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,6 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -37,9 +41,13 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.core.Tag;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.regex.Pattern;
 
@@ -52,6 +60,10 @@ public class SignUp extends AppCompatActivity {
     ImageButton googlebtn;
 
     private GoogleSignInClient client;
+    private GoogleSignInAccount googleAccount;
+    private StorageReference storageReference;
+    private FirebaseAuth auth;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,6 +225,8 @@ public class SignUp extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
+                uploadProfilePic(account);
+
                 FirebaseAuth.getInstance().signInWithCredential(credential)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -258,33 +272,41 @@ public class SignUp extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    //upload google photo to firebase
+    private void uploadProfilePic(GoogleSignInAccount account) {
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        storageReference = FirebaseStorage.getInstance().getReference("User Pics");
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(account.getPhotoUrl() != null){
+            //save image in database with id of user
+            StorageReference fileReference = storageReference.child(auth.getCurrentUser().getUid() + "."
+                    + getFileExtension(account.getPhotoUrl()));
 
-        FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                Intent intent;
-                if (user == null){
-                    intent = new Intent(SignUp.this, Login.class);
-                    startActivity(intent);
-                    finish();
+            //upload to storage
+            fileReference.putFile(account.getPhotoUrl()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Uri downloadUri = uri;
+                            currentUser = auth.getCurrentUser();
+
+                            UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                                    .setPhotoUri(downloadUri).build();
+                            currentUser.updateProfile(profileChangeRequest);
+                        }
+                    });
+                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                 }
-                else {
-                    if(user!= null){
-                        intent = new Intent(SignUp.this, MainActivity.class);
-                    }else {
-                        intent = new Intent(SignUp.this, Login.class);
-                    }
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        };
+            });
+        }
+    }
 
-
+    private String getFileExtension(Uri uri) {
+        ContentResolver contentResolver = getApplicationContext().getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 }

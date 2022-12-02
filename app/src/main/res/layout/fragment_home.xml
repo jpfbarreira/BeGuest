@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/home_fragment"
+    android:background="@color/background_color"
     tools:context=".ui.home.HomeFragment">
 
     <RelativeLayout
@@ -47,15 +48,41 @@
             android:textColor="@color/white"
             android:textSize="25dp" />
 
-        <ImageButton
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@drawable/profile_picture"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/rounded_borders_shape"
-            android:src="@drawable/default_profile_photo_icon" />
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="12dp"
+            />
+
+        <ImageView
+            android:id="@+id/home_profile_pic"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
+            android:src="@drawable/rounded_borders_shape"/>
+
+        <TextView
+            android:id="@+id/default_profile_pic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/home_profile_pic"
+            android:layout_alignTop="@+id/home_profile_pic"
+            android:layout_alignEnd="@+id/home_profile_pic"
+            android:layout_alignBottom="@+id/home_profile_pic"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="17dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/poppins_light"
+            android:textColor="@color/white"
+            android:textSize="25dp" />
 
     </RelativeLayout>
 

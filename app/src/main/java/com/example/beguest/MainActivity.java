@@ -20,6 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -28,18 +29,32 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.beguest.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private Button logoutbtn;
     private GoogleSignInAccount acct;
+    private String username;
+    private String email;
+    private  int points;
+    private FirebaseAuth auth;
+    private FirebaseUser currentUser;
+    private StorageReference storageReference;
 
+    private SharedViewModel sharedViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+
 
         //google
         acct = GoogleSignIn.getLastSignedInAccount(this);
@@ -82,20 +97,6 @@ public class MainActivity extends AppCompatActivity {
         });
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-
-//        logoutbtn = findViewById(R.id.logout_btn);
-
-//        logoutbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                FirebaseAuth.getInstance().signOut();
-//                GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), GoogleSignInOptions.DEFAULT_SIGN_IN);
-//                googleSignInClient.signOut();
-//                googleSignInClient.revokeAccess();
-//                Intent i = new Intent(MainActivity.this,Login.class);
-//                startActivity(i);
-//            }
-//        });
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
