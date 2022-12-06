@@ -31,6 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.OnMapsSdkInitializedCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class NotificationsFragment extends Fragment implements OnMapReadyCallback {
@@ -69,6 +70,8 @@ public class NotificationsFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+        googleMap.setMapStyle(new MapStyleOptions(getResources()
+                .getString(R.string.style_json)));
     }
 
     @Override

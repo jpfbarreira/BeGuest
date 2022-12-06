@@ -69,6 +69,7 @@ import com.squareup.picasso.Picasso;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Proxy;
+import java.util.Locale;
 import java.util.Objects;
 
 public class Profile extends Fragment {
@@ -140,7 +141,7 @@ public class Profile extends Fragment {
                     Picasso.get().load(item).transform(new CircleTransform()).into(profilePic);
                 }else{
                     profilePic.setBackgroundResource(R.drawable.rounded_borders_shape);
-                    default_profile_pic.setText(String.valueOf(username.charAt(0)));
+                    default_profile_pic.setText(String.valueOf(username.charAt(0)).toUpperCase(Locale.ROOT));
                 }
             });
 

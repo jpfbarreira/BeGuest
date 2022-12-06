@@ -38,6 +38,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.Locale;
+
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
@@ -83,7 +85,7 @@ public class HomeFragment extends Fragment {
                     default_profile_pic.setText(null);
                 }else {
                     profilePic.setBackgroundResource(R.drawable.rounded_borders_shape);
-                    default_profile_pic.setText(String.valueOf(username.charAt(0)));
+                    default_profile_pic.setText(String.valueOf(username.charAt(0)).toUpperCase(Locale.ROOT));
                 }
             }
         });

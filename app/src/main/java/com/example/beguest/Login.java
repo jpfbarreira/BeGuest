@@ -29,8 +29,10 @@ import com.google.android.material.progressindicator.IndeterminateDrawable;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.SignInMethodQueryResult;
 
 public class Login extends AppCompatActivity {
     private EditText editTextLoginEmail, editTextLoginPwd;
@@ -140,19 +142,31 @@ public class Login extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
-                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
-                FirebaseAuth.getInstance().signInWithCredential(credential)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
-                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                FirebaseAuth.getInstance().fetchSignInMethodsForEmail(account.getEmail()).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+
+                        boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
+
+                        if (isNewUser == false) {
+                            AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
+                            FirebaseAuth.getInstance().signInWithCredential(credential)
+                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if(task.isSuccessful()){
+                                                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                                startActivity(intent);
+                                            } else {
+                                                Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        } else {
+                            Toast.makeText(Login.this, "Login Unsuccessful, try again", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             } catch (ApiException e) {
                 e.printStackTrace();
             }
