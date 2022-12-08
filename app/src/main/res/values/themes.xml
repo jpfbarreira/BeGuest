@@ -12,6 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
+        <item name="colorControlActivated">@color/red</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -21,5 +23,19 @@
     <style name="FilterAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
         <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
+
+    <style name="my_dialog_theme" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="colorAccent">@color/red</item>                   <!--header background-->
+        <item name="android:windowBackground">@color/background_color</item>     <!--calendar background-->
+        <item name="android:colorControlActivated">@color/red</item> <!--selected day-->
+        <item name="android:textColorPrimary">@color/white</item> <!--days of the month-->
+        <item name="android:textColorSecondary">@color/white</item>    <!--days of the week-->
+    </style>
+
+    <style name="MyTimePickerWidgetStyle" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="colorAccent">@color/red</item>                   <!--header background-->
+        <item name="android:windowBackground">@color/background_color</item>     <!--calendar background-->
+        <item name="android:colorControlActivated">@color/red</item> <!--selected day-->
     </style>
 </resources>

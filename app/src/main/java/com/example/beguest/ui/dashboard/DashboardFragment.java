@@ -1,6 +1,7 @@
 package com.example.beguest.ui.dashboard;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.beguest.CreateNewEvent;
 import com.example.beguest.R;
 import com.example.beguest.databinding.FragmentDashboardBinding;
 
@@ -24,6 +26,7 @@ public class DashboardFragment extends Fragment {
     private FragmentDashboardBinding binding;
 
     private ImageView filterBtn;
+    private ImageView newEventBtn;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -34,11 +37,20 @@ public class DashboardFragment extends Fragment {
         View root = binding.getRoot();
 
         filterBtn = root.findViewById(R.id.filter_btn);
+        newEventBtn = root.findViewById(R.id.add_new_event_btn);
 
         filterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showFilter();
+            }
+        });
+
+        newEventBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(root.getContext(), CreateNewEvent.class);
+                startActivity(intent);
             }
         });
 

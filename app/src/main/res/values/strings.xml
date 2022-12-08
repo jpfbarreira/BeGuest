@@ -31,7 +31,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
 
-<!--    map style  -->
+    <!--    map style  -->
     <string name="style_json">
         [
   {
@@ -253,5 +253,13 @@
 ]
 
   </string>
+
+    <!--  Insta  -->
+
+    <string name="client_id">106600472296858</string>
+    <string name="callback_url">https://instagram.com/</string>
+    <string name="base_url">https://api.instagram.com/</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
 
