@@ -37,4 +37,5 @@
         <item name="android:windowBackground">@color/background_color</item>     <!--calendar background-->
         <item name="android:colorControlActivated">@color/red</item> <!--selected day-->
     </style>
+
 </resources>

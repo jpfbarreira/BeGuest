@@ -59,14 +59,6 @@ public class NotificationsFragment extends Fragment implements OnMapReadyCallbac
         return root;
     }
 
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;

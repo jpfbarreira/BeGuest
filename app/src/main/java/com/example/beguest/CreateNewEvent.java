@@ -5,10 +5,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.beguest.CreateEventFragments.Create_Event_Fragment1;
@@ -25,7 +27,8 @@ import java.util.List;
 public class CreateNewEvent extends AppCompatActivity {
 
     static List<String> fragments = new ArrayList<String>();
-    Button nextbtn;
+    Button nextbtn, back_btn;
+    ImageView backToActivityBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,8 @@ public class CreateNewEvent extends AppCompatActivity {
         StateProgressBar stateProgressBar = (StateProgressBar) findViewById(R.id.step_view);
 
         nextbtn = findViewById(R.id.next_btn);
+        back_btn = findViewById(R.id.back_btn);
+        backToActivityBtn = findViewById(R.id.back_toAtivity_btn);
 
         Fragment fragment1 = new Create_Event_Fragment1();
         Fragment fragment2 = new Create_Event_Fragment2();
@@ -46,11 +51,35 @@ public class CreateNewEvent extends AppCompatActivity {
             public void onClick(View view) {
                 if (fragment1.isVisible()){
                     FragmentReplacer(fragment2);
+                    back_btn.setVisibility(View.VISIBLE);
                     stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
                 }else if(fragment2.isVisible()){
                     FragmentReplacer(fragment3);
+                    nextbtn.setVisibility(View.INVISIBLE);
                     stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.THREE);
                 }
+            }
+        });
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fragment2.isVisible()){
+                    FragmentReplacer(fragment1);
+                    back_btn.setVisibility(View.INVISIBLE);
+                    stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.ONE);
+                }else if(fragment3.isVisible()){
+                    FragmentReplacer(fragment2);
+                    nextbtn.setVisibility(View.VISIBLE);
+                    stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
+                }
+            }
+        });
+
+        backToActivityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
             }
         });
 
@@ -87,6 +116,15 @@ public class CreateNewEvent extends AppCompatActivity {
         } else {
             ft.replace(R.id.frame_layout, fragment, String.valueOf(fragment.getId()));
             ft.commit();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            this.finish();
+        } else {
+            getFragmentManager().popBackStack();
         }
     }
 }

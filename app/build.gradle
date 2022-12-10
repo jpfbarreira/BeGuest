@@ -59,5 +59,6 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation 'com.kofigyan.stateprogressbar:stateprogressbar:1.0.0'
     implementation "com.github.skydoves:powerspinner:1.2.4"
+    implementation 'pub.devrel:easypermissions:2.0.1'
 }
 

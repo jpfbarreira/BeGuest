@@ -33,7 +33,10 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAXt4YLgVM06bgyrN82KCxzge_RlVhKylQ" />
+            android:value="AIzaSyBPjxcL85AIcYzabP7sO6hICkZH6-OCzFo" />
+
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".SignUp"
