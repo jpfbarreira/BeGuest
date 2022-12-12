@@ -59,11 +59,13 @@
         app:layout_constraintTop_toBottomOf="@+id/step_view" />
 
     <Button
+        android:visibility="invisible"
         android:id="@+id/next_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#00FFFFFF"
         android:backgroundTint="#00FFFFFF"
+        android:fontFamily="@font/poppins_bold"
         android:drawableRight="@drawable/ic_baseline_arrow_forward_24"
         android:text="Next"
         android:textColor="@color/white"
@@ -72,6 +74,7 @@
 
     <Button
         android:id="@+id/back_btn"
+        android:fontFamily="@font/poppins_bold"
         android:layout_width="wrap_content"
         android:visibility="invisible"
         android:layout_height="wrap_content"

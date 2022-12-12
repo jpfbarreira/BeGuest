@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.media.Image;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.example.beguest.CreateEventFragments.Create_Event_Fragment1;
 import com.example.beguest.CreateEventFragments.Create_Event_Fragment2;
 import com.example.beguest.CreateEventFragments.Create_Event_Fragment3;
+import com.example.beguest.CreateEventFragments.Create_Event_ViewModel;
 import com.kofigyan.stateprogressbar.StateProgressBar;
 import com.kofigyan.stateprogressbar.components.StateItem;
 import com.kofigyan.stateprogressbar.listeners.OnStateItemClickListener;
@@ -27,13 +29,17 @@ import java.util.List;
 public class CreateNewEvent extends AppCompatActivity {
 
     static List<String> fragments = new ArrayList<String>();
-    Button nextbtn, back_btn;
-    ImageView backToActivityBtn;
+    public Button nextbtn, back_btn;
+    private ImageView backToActivityBtn;
+
+    private Create_Event_ViewModel createEventViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_event);
+
+        createEventViewModel = new ViewModelProvider(this).get(Create_Event_ViewModel.class);
 
         StateProgressBar stateProgressBar = (StateProgressBar) findViewById(R.id.step_view);
 

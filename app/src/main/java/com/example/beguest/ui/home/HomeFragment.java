@@ -54,7 +54,6 @@ public class HomeFragment extends Fragment {
     private TextView default_profile_pic;
 
     private SharedViewModel sharedViewModel;
-    private HomeViewModel homeViewModel;
     private FirebaseAuth auth;
     private StorageReference storageReference;
 

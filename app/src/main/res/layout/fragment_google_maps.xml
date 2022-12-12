@@ -16,12 +16,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="110dp"
+        android:layout_marginEnd="90dp"
+        android:textSize="15sp"
         android:padding="10dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/rounded_borders_no_color"
         android:backgroundTint="#272727"
-        android:hint="Search location"
+        android:hint="Choose a location for your event"
         android:textColor="@color/white"
         android:textColorHint="#6A6A6A"
         />
@@ -32,7 +33,7 @@
         android:layout_height="28dp"
         android:background="@drawable/ic_baseline_search_24"
         android:layout_marginTop="27dp"
-        android:layout_marginEnd="120dp"
+        android:layout_marginEnd="97dp"
         android:layout_alignParentEnd="true"
         android:backgroundTint="#6A6A6A"
         />
@@ -54,7 +55,6 @@
             android:layout_height="25dp"
             android:background="@drawable/ic_baseline_my_location_24"
             />
-
     </LinearLayout>
 
 

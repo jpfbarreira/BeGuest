@@ -56,6 +56,8 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
     private LinearLayout currentLocation;
     private double latitude;
     private double longitude;
+    private Marker marker;
+    private String address;
 
     private ImageView searchLocationBtn;
     private AutoCompleteTextView searchLocationEditText;
@@ -90,17 +92,17 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
         });
 
         searchLocationBtn.setOnClickListener(new View.OnClickListener() {
-            Marker marker;
             @Override
             public void onClick(View view) {
                 String location = searchLocationEditText.getText().toString();
+                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+
                 if (marker != null){
                     marker.remove();
                 }
                 if(location == null){
                     Log.d("Error", "Type a location pls");
                 }else {
-                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
                     try {
                         List<Address> addressList = geocoder.getFromLocationName(location, 1);
                         if(addressList.size() > 0){
@@ -110,7 +112,9 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
                                     .position(latLng)
                                     .title("event")
                             );
+                            address = addressList.get(0).getAddressLine(0);
                             mMap.animateCamera(cameraUpdate);
+
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -176,6 +180,31 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
         }
 
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(@NonNull LatLng latLng) {
+                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+                try {
+                    List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                    address = addressList.get(0).getAddressLine(0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (marker != null){
+                    marker.remove();
+                }
+                marker = mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title("event")
+                );
+                mMap.animateCamera(cameraUpdate);
+                if(searchLocationEditText.getText().toString() != ""){
+                    searchLocationEditText.setText("");
+                }
+            }
+        });
     }
 
     private void getMyLocation() {
