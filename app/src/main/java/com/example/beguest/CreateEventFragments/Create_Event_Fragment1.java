@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.beguest.CreateNewEvent;
 import com.example.beguest.R;
@@ -149,6 +150,8 @@ public class Create_Event_Fragment1 extends Fragment {
                         eventPrivacy);
                 nextbtn.setVisibility(View.VISIBLE);
                 saveDataBtn.setVisibility(View.INVISIBLE);
+                Toast.makeText(getActivity(), "Data Saved",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 
 import android.util.Log;
@@ -25,6 +26,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.beguest.CreateEventFragments.Create_Event_Fragment2;
+import com.example.beguest.CreateEventFragments.Create_Event_ViewModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -57,13 +60,15 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
     private double latitude;
     private double longitude;
     private Marker marker;
-    private String address;
+    public String address;
 
     private ImageView searchLocationBtn;
     private AutoCompleteTextView searchLocationEditText;
 
     private PlaceAutocompleteAdapter placeAutocompleteAdapter;
     private GoogleApiClient googleApiClient;
+
+    private Create_Event_ViewModel createEventViewModelChild;
 
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -168), new LatLng(71, 168));
 
@@ -73,6 +78,7 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_google_maps, container, false);
 
+        createEventViewModelChild = new ViewModelProvider(getActivity()).get(Create_Event_ViewModel.class);
 
         // Initialize map fragment
         SupportMapFragment supportMapFragment=(SupportMapFragment)
@@ -114,7 +120,8 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
                             );
                             address = addressList.get(0).getAddressLine(0);
                             mMap.animateCamera(cameraUpdate);
-
+                            Log.d("MAPSSS", address);
+                            createEventViewModelChild.setLocation(address);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -189,6 +196,7 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
                 try {
                     List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
                     address = addressList.get(0).getAddressLine(0);
+                    createEventViewModelChild.setLocation(address);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -1,12 +1,12 @@
 package com.example.beguest;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +18,14 @@ import com.example.beguest.CreateEventFragments.Create_Event_Fragment1;
 import com.example.beguest.CreateEventFragments.Create_Event_Fragment2;
 import com.example.beguest.CreateEventFragments.Create_Event_Fragment3;
 import com.example.beguest.CreateEventFragments.Create_Event_ViewModel;
+import com.example.beguest.CreateEventFragments.Event;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.StorageReference;
 import com.kofigyan.stateprogressbar.StateProgressBar;
 import com.kofigyan.stateprogressbar.components.StateItem;
 import com.kofigyan.stateprogressbar.listeners.OnStateItemClickListener;
@@ -29,8 +37,12 @@ import java.util.List;
 public class CreateNewEvent extends AppCompatActivity {
 
     static List<String> fragments = new ArrayList<String>();
-    public Button nextbtn, back_btn;
+    public Button nextbtn, back_btn, createEventbtn;
     private ImageView backToActivityBtn;
+
+    private StorageReference storageReference;
+    private FirebaseAuth auth;
+    private FirebaseUser currentUser;
 
     private Create_Event_ViewModel createEventViewModel;
 
@@ -46,11 +58,13 @@ public class CreateNewEvent extends AppCompatActivity {
         nextbtn = findViewById(R.id.next_btn);
         back_btn = findViewById(R.id.back_btn);
         backToActivityBtn = findViewById(R.id.back_toAtivity_btn);
+        createEventbtn = findViewById(R.id.create_new_event);
 
         Fragment fragment1 = new Create_Event_Fragment1();
         Fragment fragment2 = new Create_Event_Fragment2();
         Fragment fragment3 = new Create_Event_Fragment3();
         FragmentReplacer(fragment1);
+
 
         nextbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,10 +72,13 @@ public class CreateNewEvent extends AppCompatActivity {
                 if (fragment1.isVisible()){
                     FragmentReplacer(fragment2);
                     back_btn.setVisibility(View.VISIBLE);
+                    createEventbtn.setVisibility(View.INVISIBLE);
                     stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
                 }else if(fragment2.isVisible()){
                     FragmentReplacer(fragment3);
                     nextbtn.setVisibility(View.INVISIBLE);
+                    createEventbtn.setVisibility(View.VISIBLE);
+
                     stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.THREE);
                 }
             }
@@ -77,6 +94,7 @@ public class CreateNewEvent extends AppCompatActivity {
                 }else if(fragment3.isVisible()){
                     FragmentReplacer(fragment2);
                     nextbtn.setVisibility(View.VISIBLE);
+                    createEventbtn.setVisibility(View.INVISIBLE);
                     stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
                 }
             }
@@ -133,4 +151,31 @@ public class CreateNewEvent extends AppCompatActivity {
             getFragmentManager().popBackStack();
         }
     }
+
+    public void registerEvent(String name, String date, String description, String time,
+                              String minAge, String maxPeople, String minPoints, String privacy, String location) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app")
+                .getReference("Registered Events");
+
+        ArrayList<String> registeredUserIDs = new ArrayList<String>();
+        registeredUserIDs.add(user.getUid());
+        Event event = new Event(registeredUserIDs, name, date, description, time, minAge, maxPeople, minPoints, privacy, location);
+
+        reference.child(user.getUid()).setValue(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(CreateNewEvent.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
+                    //start new activity
+                    onBackPressed();
+                }else {
+                    Toast.makeText(CreateNewEvent.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    Log.d("Error", task.getException().getMessage());
+                }
+            }
+        });
+    }
+
 }

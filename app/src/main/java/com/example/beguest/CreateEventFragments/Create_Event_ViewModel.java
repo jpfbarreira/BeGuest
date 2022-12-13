@@ -1,6 +1,7 @@
 package com.example.beguest.CreateEventFragments;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -39,42 +40,45 @@ public class Create_Event_ViewModel extends ViewModel {
         eventMaxPeople.setValue(maxPeople);
         eventMinPoints.setValue(minPoints);
         eventPrivacy.setValue(privacy);
-        Log.d("View model", "setted the data of your event " + privacy);
     }
 
-    public MutableLiveData<String> getEventName() {
+    public LiveData<String> getEventName() {
         return eventName;
     }
 
-    public MutableLiveData<String> getEventDate() {
+    public LiveData<String> getEventDate() {
         return eventDate;
     }
 
-    public MutableLiveData<String> getEventDescription() {
+    public LiveData<String> getEventDescription() {
         return eventDescription;
     }
 
-    public MutableLiveData<String> getEventTime() {
+    public LiveData<String> getEventTime() {
         return eventTime;
     }
 
-    public MutableLiveData<String> getEventMinAge() {
+    public LiveData<String> getEventMinAge() {
         return eventMinAge;
     }
 
-    public MutableLiveData<String> getEventMaxPeople() {
+    public LiveData<String> getEventMaxPeople() {
         return eventMaxPeople;
     }
 
-    public MutableLiveData<String> getEventMinPoints() {
+    public LiveData<String> getEventMinPoints() {
         return eventMinPoints;
     }
 
-    public MutableLiveData<String> getEventPrivacy() {
+    public LiveData<String> getEventPrivacy() {
         return eventPrivacy;
     }
 
-    public MutableLiveData<String> getEventLocation() {
+    public LiveData<String> getEventLocation() {
         return eventLocation;
+    }
+
+    public void setLocation(String location){
+        eventLocation.setValue(location);
     }
 }

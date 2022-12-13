@@ -3,15 +3,30 @@ package com.example.beguest.CreateEventFragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
+import com.example.beguest.CreateNewEvent;
 import com.example.beguest.R;
+
+import java.util.ArrayList;
 
 public class Create_Event_Fragment3 extends Fragment {
     View view;
+
+    private Create_Event_ViewModel createEventViewModel;
+    private TextView eventName, eventDescription, eventDate, eventTime, eventMaxPeople, eventMinPoints, eventMinAge, eventPrivacy, eventLocation;
+    private String name, date, description, time, minAge, maxPeople, minPoints, privacy, location;
+    private TextView eventDescriptionLabel, eventMinPointsLabel, eventMinAgeLabel;
+    private Button createEventbtn;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -19,6 +34,92 @@ public class Create_Event_Fragment3 extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_create__event_3, container, false);
 
+        createEventViewModel = new ViewModelProvider(getActivity()).get(Create_Event_ViewModel.class);
+
+        createEventbtn = getActivity().findViewById(R.id.create_new_event);
+
+        eventName = view.findViewById(R.id.event_name);
+        eventDescription = view.findViewById(R.id.event_description);
+        eventDate = view.findViewById(R.id.event_date);
+        eventTime = view.findViewById(R.id.event_time);
+        eventMaxPeople = view.findViewById(R.id.event_max_people);
+        eventMinPoints = view.findViewById(R.id.event_min_points);
+        eventMinAge = view.findViewById(R.id.event_min_age);
+        eventPrivacy = view.findViewById(R.id.event_privacy);
+        eventLocation = view.findViewById(R.id.event_location);
+
+        //labels
+        eventDescriptionLabel = view.findViewById(R.id.textView_description);
+        eventMinPointsLabel = view.findViewById(R.id.textView13);
+        eventMinAgeLabel = view.findViewById(R.id.textView14);
+
+
+        createEventViewModel.getEventName().observe(getViewLifecycleOwner(), item -> {
+            name = item;
+            eventName.setText(item);
+        });
+        createEventViewModel.getEventDate().observe(getViewLifecycleOwner(), item -> {
+            date = item;
+            eventDate.setText(item);
+        });
+        createEventViewModel.getEventTime().observe(getViewLifecycleOwner(), item -> {
+            time = item;
+            eventTime.setText(item);
+        });
+        createEventViewModel.getEventPrivacy().observe(getViewLifecycleOwner(), item -> {
+            privacy = item;
+            eventPrivacy.setText(item);
+        });
+        createEventViewModel.getEventLocation().observe(getViewLifecycleOwner(), item -> {
+            location = item;
+            eventLocation.setText(item);
+            Log.d("yoooh", item);
+        });
+
+        //not mandatory
+        createEventViewModel.getEventDescription().observe(getViewLifecycleOwner(), item -> {
+            description = item;
+            if (!TextUtils.isEmpty(item)){
+                eventDescription.setText(item);
+            }else {
+                eventDescription.setText("No Description");
+            }
+        });
+        createEventViewModel.getEventMinAge().observe(getViewLifecycleOwner(), item -> {
+            minAge = item;
+            if (!TextUtils.isEmpty(item)){
+                eventMinAge.setText(item);
+            }else {
+                eventMinAge.setText("No Minimum Age");
+            }
+        });
+        createEventViewModel.getEventMaxPeople().observe(getViewLifecycleOwner(), item -> {
+            maxPeople = item;
+            if (!TextUtils.isEmpty(item)){
+                eventMaxPeople.setText(item);
+            }else {
+                eventMaxPeople.setVisibility(View.GONE);
+            }
+        });
+        createEventViewModel.getEventMinPoints().observe(getViewLifecycleOwner(), item -> {
+            minPoints = item;
+            if (!TextUtils.isEmpty(item)){
+                eventMinPoints.setText(item);
+            }else {
+                eventMinPoints.setText("No Minimum Points");
+            }
+        });
+
+        createEventbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((CreateNewEvent)getActivity()).registerEvent(name, date, description, time, minAge, maxPeople, minPoints, privacy, location);
+            }
+        });
+
+
         return view;
     }
+
+
 }

@@ -12,11 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.beguest.CreateNewEvent;
 import com.example.beguest.Google_Maps_Fragment;
 import com.example.beguest.R;
 import com.example.beguest.databinding.FragmentNotificationsBinding;
@@ -33,6 +36,9 @@ public class Create_Event_Fragment2 extends Fragment{
     View view;
     private FragmentNotificationsBinding binding;
     private boolean mLocationPermissionGranted = false;
+    private String address;
+
+    public Create_Event_ViewModel createEventViewModel;
 
     private GoogleMap mMap;
     private MapView mapView;
@@ -43,9 +49,15 @@ public class Create_Event_Fragment2 extends Fragment{
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_create__event_2, container, false);
 
+        createEventViewModel = new ViewModelProvider(this).get(Create_Event_ViewModel.class);
+
         Fragment mapsFragment = new Google_Maps_Fragment();
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_layout_maps, mapsFragment).commit();
+
+
+
+        createEventViewModel.setLocation(address);
 
 //        mapView = view.findViewById(R.id.create_event_map_location);
 //        mapView.getMapAsync(this);
