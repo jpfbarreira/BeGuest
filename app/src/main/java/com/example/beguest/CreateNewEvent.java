@@ -159,16 +159,21 @@ public class CreateNewEvent extends AppCompatActivity {
         DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app")
                 .getReference("Registered Events");
 
+        DatabaseReference userReference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app")
+                .getReference("Registered Users");
+
         ArrayList<String> registeredUserIDs = new ArrayList<String>();
         registeredUserIDs.add(user.getUid());
         Event event = new Event(registeredUserIDs, name, date, description, time, minAge, maxPeople, minPoints, privacy, location);
 
-        reference.child(user.getUid()).setValue(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+        reference.child(user.getUid()).push().setValue(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(CreateNewEvent.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
-                    //start new activity
+                    String eventId = reference.child(user.getUid()).getKey();
+                    //start new activity;
                     onBackPressed();
                 }else {
                     Toast.makeText(CreateNewEvent.this, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -176,6 +181,8 @@ public class CreateNewEvent extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 
 }

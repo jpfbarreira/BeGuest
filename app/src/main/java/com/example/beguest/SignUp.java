@@ -50,6 +50,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import kotlin.properties.ReadWriteProperty;
@@ -65,6 +66,8 @@ public class SignUp extends AppCompatActivity {
     private StorageReference storageReference;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
+
+    private ArrayList<String> userRegistedEvents = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,9 +143,10 @@ public class SignUp extends AppCompatActivity {
                     editTextuserPass.setError("Password has to have at least 6 digits");
                     editTextuserPass.requestFocus();
                 } else {
+
                     signUpBtn.setText(null);
                     signUpBtn.setIcon(progressIndicatorDrawable);
-                    registerUser(email, username, points, instagram, twitter,password, signUpBtn, progressIndicatorDrawable);
+                    registerUser(email, username, points, instagram, twitter,password, userRegistedEvents,signUpBtn, progressIndicatorDrawable);
                 }
             }
         });
@@ -167,7 +171,7 @@ public class SignUp extends AppCompatActivity {
 
     }
 
-    private void registerUser(String email, String username, int points, String instagram, String twitter, String password, MaterialButton signUpBtn, IndeterminateDrawable progressIndicatorDrawable) {
+    private void registerUser(String email, String username, int points, String instagram, String twitter, String password, ArrayList<String> registedEvents, MaterialButton signUpBtn, IndeterminateDrawable progressIndicatorDrawable) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignUp.this,
                 new OnCompleteListener<AuthResult>() {
@@ -181,9 +185,9 @@ public class SignUp extends AppCompatActivity {
                             DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app").getReference("Registered Users");
 
                             //save user information into Realtime database
-                            ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(username, points, instagram, twitter);
+                            ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(username, points, instagram, twitter, registedEvents);
 
-                            reference.child(user.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                reference.child(user.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
@@ -251,7 +255,7 @@ public class SignUp extends AppCompatActivity {
                                                 DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app").getReference("Registered Users");
 
                                                 //save user information into Realtime database
-                                                ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(account.getDisplayName(), points, instagram, twitter);
+                                                ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(account.getDisplayName(), points, instagram, twitter, userRegistedEvents);
                                                 reference.child(user.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {

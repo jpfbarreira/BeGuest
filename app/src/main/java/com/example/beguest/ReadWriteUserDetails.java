@@ -7,14 +7,16 @@ public class ReadWriteUserDetails {
     public int points;
     public String instagram;
     public String twitter;
+    public ArrayList<String> registeredEventsIDs = new ArrayList<String>();
 
     //constructor
     public ReadWriteUserDetails(){};
 
-    public ReadWriteUserDetails(String username,int points, String instagram, String twitter) {
+    public ReadWriteUserDetails(String username,int points, String instagram, String twitter, ArrayList<String> registeredEventsIDs) {
         this.username = username;
         this.points = points;
         this.instagram = instagram;
         this.twitter = twitter;
+        this.registeredEventsIDs = registeredEventsIDs;
     }
 }
