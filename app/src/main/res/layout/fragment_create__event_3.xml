@@ -146,7 +146,7 @@
                     android:layout_marginHorizontal="15dp"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/poppins_bold"
-                    android:text="Event Minimum Points"
+                    android:text="Event Tags"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -154,15 +154,16 @@
 
                 <TextView
                     android:id="@+id/event_min_points"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:drawableLeft="@drawable/royal_crown_made_of_triangle_outlines_and_circle_shapes_svgrepo_com"
                     android:drawablePadding="5dp"
                     android:fontFamily="@font/poppins_light"
-                    android:text="100"
+                    android:text="Dance, Karaoke, Party"
                     android:textColor="@color/white"
                     android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView13" />
 

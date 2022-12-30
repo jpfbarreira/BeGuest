@@ -6,10 +6,12 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +19,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.beguest.CreateNewEvent;
 import com.example.beguest.R;
 import com.example.beguest.SharedViewModel;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.skydoves.powerspinner.OnSpinnerItemSelectedListener;
 import com.skydoves.powerspinner.PowerSpinnerView;
@@ -35,15 +41,17 @@ import java.util.Locale;
 public class Create_Event_Fragment1 extends Fragment {
     private View view;
 
-    private TextInputEditText eventNameTextView, eventDateTextView,eventDescriptionTextView, eventTimeTextView;
-    private TextInputEditText eventMinAgeTextView, eventMaxPeopleTextView, eventMinPointsTextView;
-    private String eventName, eventDate, eventDescription, eventTime, eventMinAge, eventMaxPeople, eventMinPoints, eventPrivacy;
+    private TextInputEditText eventNameTextView, eventDateTextView, eventDescriptionTextView, eventTimeTextView;
+    private TextInputEditText eventMinAgeTextView, eventMaxPeopleTextView, eventTagsTextView;
+    private String eventName, eventDate, eventDescription, eventTime, eventMinAge, eventMaxPeople, eventPrivacy, eventTags;
     private SwitchCompat switchPrivacyBtn;
     private Button saveDataBtn;
 
+    private ConstraintLayout tagsBottomSheet;
+
     private Create_Event_ViewModel createEventViewModel;
 
-    final Calendar calendar= Calendar.getInstance();
+    final Calendar calendar = Calendar.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,12 +67,13 @@ public class Create_Event_Fragment1 extends Fragment {
         eventTimeTextView = view.findViewById(R.id.event_time);
         eventMinAgeTextView = view.findViewById(R.id.event_minimum_age);
         eventMaxPeopleTextView = view.findViewById(R.id.event_max_people);
-        eventMinPointsTextView = view.findViewById(R.id.event_minimum_points);
+        eventTagsTextView = view.findViewById(R.id.event_tags_field);
 
+        tagsBottomSheet = view.findViewById(R.id.tags_bottom_sheet);
         switchPrivacyBtn = view.findViewById(R.id.event_privacy);
 
         saveDataBtn = view.findViewById(R.id.save_data_btn);
-        Button nextbtn = ((CreateNewEvent)getActivity()).nextbtn;
+        Button nextbtn = ((CreateNewEvent) getActivity()).nextbtn;
 
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -90,15 +99,15 @@ public class Create_Event_Fragment1 extends Fragment {
         eventTimeTextView.addTextChangedListener(textWatcher);
         eventMinAgeTextView.addTextChangedListener(textWatcher);
         eventMaxPeopleTextView.addTextChangedListener(textWatcher);
-        eventMinPointsTextView.addTextChangedListener(textWatcher);
+        eventTagsTextView.addTextChangedListener(textWatcher);
 
 
         switchPrivacyBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     switchPrivacyBtn.setText("Private");
-                }else {
+                } else {
                     switchPrivacyBtn.setText("Public");
                 }
             }
@@ -111,8 +120,8 @@ public class Create_Event_Fragment1 extends Fragment {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH,month);
-                calendar.set(Calendar.DAY_OF_MONTH,day);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, day);
                 eventDate();
             }
         };
@@ -120,7 +129,7 @@ public class Create_Event_Fragment1 extends Fragment {
         eventDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getContext(),R.style.my_dialog_theme, date, calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getContext(), R.style.my_dialog_theme, date, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
 
@@ -131,44 +140,71 @@ public class Create_Event_Fragment1 extends Fragment {
             }
         });
 
+        eventTagsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.CustomBottomSheetDialog);
+                View bottomSheetView = getLayoutInflater().inflate(R.layout.event_tags, null);
+
+                bottomSheetDialog.setContentView(bottomSheetView);
+                bottomSheetDialog.show();
+
+                TextView danceTagTextView = bottomSheetDialog.findViewById(R.id.dance_textView);
+                TextView karaokeTagTextView = bottomSheetDialog.findViewById(R.id.karaoke_textView);
+                TextView raveTagTextView = bottomSheetDialog.findViewById(R.id.rave_textView);
+            }
+        });
+
         saveDataBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //here make if to make mandatory fields
                 eventName = eventNameTextView.getText().toString();
-                eventDate =  eventDateTextView.getText().toString();
+                eventDate = eventDateTextView.getText().toString();
                 eventDescription = eventDescriptionTextView.getText().toString();
                 eventTime = eventTimeTextView.getText().toString();
                 eventMinAge = eventMinAgeTextView.getText().toString();
                 eventMaxPeople = eventMaxPeopleTextView.getText().toString();
-                eventMinPoints = eventMinPointsTextView.getText().toString();
                 eventPrivacy = (String) switchPrivacyBtn.getText();
+                eventTags = String.valueOf(eventTagsTextView.getText());
 
-                createEventViewModel.setData(eventName, eventDate, eventDescription, eventTime, eventMinAge,
-                        eventMaxPeople,
-                        eventMinPoints,
-                        eventPrivacy);
-                nextbtn.setVisibility(View.VISIBLE);
-                saveDataBtn.setVisibility(View.INVISIBLE);
-                Toast.makeText(getActivity(), "Data Saved",
-                        Toast.LENGTH_SHORT).show();
+                if (eventName.length() == 0 || eventDate.length() == 0 || eventTime.length() == 0) {
+                    if (eventName.length() == 0) {
+                        eventNameTextView.setError("Required");
+                    } else if (eventDate.length() == 0) {
+                        eventDateTextView.setError("Required");
+                    } else if (eventTime.length() == 0) {
+                        eventTimeTextView.setError("Required");
+                    }
+                } else {
+                    eventDateTextView.setError(null);
+                    eventTimeTextView.setError(null);
+                    createEventViewModel.setData(eventName, eventDate, eventDescription, eventTime, eventMinAge,
+                            eventMaxPeople,
+                            eventTags,
+                            eventPrivacy);
+                    nextbtn.setVisibility(View.VISIBLE);
+                    saveDataBtn.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getActivity(), "Data Saved",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         return view;
     }
-    private void eventDate(){
-        String myFormat="dd/MM/yy";
-        SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.UK);
+
+    private void eventDate() {
+        String myFormat = "dd/MM/yy";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.UK);
         eventDate = dateFormat.format(calendar.getTime());
         eventDateTextView.setText(dateFormat.format(calendar.getTime()));
     }
 
-    private void showTimePicker(){
+    private void showTimePicker() {
         Calendar mcurrentTime = Calendar.getInstance();
         int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
         int minute = mcurrentTime.get(Calendar.MINUTE);
-        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), R.style.MyTimePickerWidgetStyle ,new TimePickerDialog.OnTimeSetListener() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), R.style.MyTimePickerWidgetStyle, new TimePickerDialog.OnTimeSetListener() {
 
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {

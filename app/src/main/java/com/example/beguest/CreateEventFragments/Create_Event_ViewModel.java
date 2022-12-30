@@ -13,7 +13,7 @@ public class Create_Event_ViewModel extends ViewModel {
     private final MutableLiveData<String> eventTime;
     private final MutableLiveData<String> eventMinAge;
     private final MutableLiveData<String> eventMaxPeople;
-    private final MutableLiveData<String> eventMinPoints;
+    private final MutableLiveData<String> eventTags;
     private final MutableLiveData<String> eventPrivacy;
     private final MutableLiveData<String> eventLocation;
 
@@ -25,20 +25,20 @@ public class Create_Event_ViewModel extends ViewModel {
         eventTime = new MutableLiveData<>();
         eventMinAge = new MutableLiveData<>();
         eventMaxPeople = new MutableLiveData<>();
-        eventMinPoints = new MutableLiveData<>();
+        eventTags = new MutableLiveData<>();
         eventPrivacy = new MutableLiveData<>();
         eventLocation = new MutableLiveData<>();
     }
 
     public void setData(String name, String date, String description, String time,
-                        String minAge, String maxPeople, String minPoints, String privacy){
+                        String minAge, String maxPeople, String tags, String privacy){
         eventName.setValue(name);
         eventDate.setValue(date);
         eventDescription.setValue(description);
         eventTime.setValue(time);
         eventMinAge.setValue(minAge);
         eventMaxPeople.setValue(maxPeople);
-        eventMinPoints.setValue(minPoints);
+        eventTags.setValue(tags);
         eventPrivacy.setValue(privacy);
     }
 
@@ -66,8 +66,8 @@ public class Create_Event_ViewModel extends ViewModel {
         return eventMaxPeople;
     }
 
-    public LiveData<String> getEventMinPoints() {
-        return eventMinPoints;
+    public LiveData<String> getEventTags() {
+        return eventTags;
     }
 
     public LiveData<String> getEventPrivacy() {

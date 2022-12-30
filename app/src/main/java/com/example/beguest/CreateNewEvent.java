@@ -163,15 +163,19 @@ public class CreateNewEvent extends AppCompatActivity {
                 .getReference("Registered Users");
 
         ArrayList<String> registeredUserIDs = new ArrayList<String>();
-        registeredUserIDs.add(user.getUid());
-        Event event = new Event(registeredUserIDs, name, date, description, time, minAge, maxPeople, minPoints, privacy, location);
+
+        String eventID = reference.push().getKey();
+        Log.d("EVENT",eventID);
+
+        Event event = new Event(user.getUid(), registeredUserIDs, name, date, description, time, minAge, maxPeople, minPoints, privacy, location);
 
 
-        reference.child(user.getUid()).push().setValue(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+        reference.child(eventID).setValue(event).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(CreateNewEvent.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
+
                     String eventId = reference.child(user.getUid()).getKey();
                     //start new activity;
                     onBackPressed();

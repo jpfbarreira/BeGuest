@@ -23,7 +23,7 @@ public class Create_Event_Fragment3 extends Fragment {
 
     private Create_Event_ViewModel createEventViewModel;
     private TextView eventName, eventDescription, eventDate, eventTime, eventMaxPeople, eventMinPoints, eventMinAge, eventPrivacy, eventLocation;
-    private String name, date, description, time, minAge, maxPeople, minPoints, privacy, location;
+    private String name, date, description, time, minAge, maxPeople, tags, privacy, location;
     private TextView eventDescriptionLabel, eventMinPointsLabel, eventMinAgeLabel;
     private Button createEventbtn;
 
@@ -101,8 +101,8 @@ public class Create_Event_Fragment3 extends Fragment {
                 eventMaxPeople.setVisibility(View.GONE);
             }
         });
-        createEventViewModel.getEventMinPoints().observe(getViewLifecycleOwner(), item -> {
-            minPoints = item;
+        createEventViewModel.getEventTags().observe(getViewLifecycleOwner(), item -> {
+            tags = item;
             if (!TextUtils.isEmpty(item)){
                 eventMinPoints.setText(item);
             }else {
@@ -113,7 +113,7 @@ public class Create_Event_Fragment3 extends Fragment {
         createEventbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((CreateNewEvent)getActivity()).registerEvent(name, date, description, time, minAge, maxPeople, minPoints, privacy, location);
+                ((CreateNewEvent)getActivity()).registerEvent(name, date, description, time, minAge, maxPeople, tags, privacy, location);
             }
         });
 
