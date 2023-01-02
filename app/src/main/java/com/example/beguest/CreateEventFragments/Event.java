@@ -6,12 +6,13 @@ import java.util.ArrayList;
 public class Event implements Serializable {
     public ArrayList<String> registeredUserIDs = new ArrayList<String>();
     public String eventID, title, date, description, time, minAge,  maxPeople,  tags,  privacy, location, creatorId;
+    public Integer eventPhoto;
 
     //constructor
     public Event(){};
 
     public Event(String creatorId, ArrayList<String> registeredUserIDs, String name, String date, String description, String time,
-                 String minAge, String maxPeople, String tags, String privacy, String location) {
+                 String minAge, String maxPeople, String tags, String privacy, String location, int eventPhoto) {
         this.creatorId = creatorId;
         this.registeredUserIDs = registeredUserIDs;
         this.title = name;
@@ -23,6 +24,7 @@ public class Event implements Serializable {
         this.tags = tags;
         this.privacy = privacy;
         this.location = location;
+        this.eventPhoto = eventPhoto;
     }
 
     public ArrayList<String> getRegisteredUserIDs() {

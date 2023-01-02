@@ -127,6 +127,7 @@
                 app:cardCornerRadius="250dp">
 
                 <ImageView
+                    android:id="@+id/first_person_photo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop" />
@@ -153,6 +154,7 @@
                 app:cardCornerRadius="250dp">
 
                 <ImageView
+                    android:id="@+id/second_person_photo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop" />
@@ -179,6 +181,7 @@
                 app:cardCornerRadius="250dp">
 
                 <ImageView
+                    android:id="@+id/third_person_photo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop" />
@@ -206,6 +209,7 @@
                 app:cardCornerRadius="250dp">
 
                 <TextView
+                    android:id="@+id/users_registered"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:fontFamily="@font/poppins_light"

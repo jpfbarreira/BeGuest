@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.kofigyan.stateprogressbar.listeners.OnStateItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class CreateNewEvent extends AppCompatActivity {
@@ -163,11 +165,30 @@ public class CreateNewEvent extends AppCompatActivity {
                 .getReference("Registered Users");
 
         ArrayList<String> registeredUserIDs = new ArrayList<String>();
+        //event photo;
+        ArrayList<Integer> photos = new ArrayList<>();
+        int photo1 = R.drawable.photo_events1;
+        int photo2 = R.drawable.photo_events2;
+        int photo3 = R.drawable.photo_events3;
+        int photo4 = R.drawable.photo_events4;
+        int photo5 = R.drawable.photo_events5;
+        int photo6 = R.drawable.photo_events6;
+        int photo7 = R.drawable.photo_events7;
+        int photo8 = R.drawable.photo_events8;
+        int photo9 = R.drawable.photo_events9;
+        int photo10 =R.drawable.photo_events10;
+        photos.add(photo1);photos.add(photo2);photos.add(photo3);photos.add(photo4);photos.add(photo5);photos.add(photo6);
+        photos.add(photo7);photos.add(photo8);photos.add(photo9);photos.add(photo10);
+
+        int random = new Random().nextInt(photos.size());
+        int eventPhoto = photos.get(random);
+
 
         String eventID = reference.push().getKey();
         Log.d("EVENT",eventID);
 
-        Event event = new Event(user.getUid(), registeredUserIDs, name, date, description, time, minAge, maxPeople, minPoints, privacy, location);
+        Event event = new Event(user.getUid(), registeredUserIDs, name, date, description, time, minAge, maxPeople
+                , minPoints, privacy, location, eventPhoto);
 
 
         reference.child(eventID).setValue(event).addOnCompleteListener(new OnCompleteListener<Void>() {

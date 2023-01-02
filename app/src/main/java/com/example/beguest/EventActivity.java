@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +24,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,10 +35,10 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class EventActivity extends AppCompatActivity {
-    private ImageView backbtn, editEventBtn;
+    private ImageView backbtn, editEventBtn, first_person_photo, second_person_photo, third_person_photo;
     private MaterialButton interestedBtn;
     private Boolean isInterested;
-    private TextView eventTitleTextView, eventDescriptionTextView, eventLocationTextView, eventDateTextView;
+    private TextView eventTitleTextView, eventDescriptionTextView, eventLocationTextView, eventDateTextView, users_registered;
 
     private DatabaseReference reference;
 
@@ -58,6 +61,10 @@ public class EventActivity extends AppCompatActivity {
         eventLocationTextView = findViewById(R.id.event_location);
         eventDateTextView = findViewById(R.id.event_time);
         editEventBtn = findViewById(R.id.edit_event_btn);
+        first_person_photo = findViewById(R.id.first_person_photo);
+        second_person_photo = findViewById(R.id.second_person_photo);
+        third_person_photo = findViewById(R.id.third_person_photo);
+        users_registered = findViewById(R.id.users_registered);
 
         //setTexts
         eventTitleTextView.setText(event.title);
@@ -89,14 +96,17 @@ public class EventActivity extends AppCompatActivity {
 
         //DataBase
         ArrayList<String> registeredUsers = new ArrayList<>();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+
+        //photos
+//        Uri userProfilePic = currentUser.getPhotoUrl();
+//        Picasso.get().load(userProfilePic).into(first_person_photo);
 
         reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app")
                 .getReference("Registered Events");
         DatabaseReference eventReference = reference.child(eventId);
         DatabaseReference registeredUsersRef = eventReference.child("Registered Users");
-
-        Log.d("EventCreator", event.creatorId);
 
         registeredUsersRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -108,7 +118,7 @@ public class EventActivity extends AppCompatActivity {
 //                    Log.d("USERID", currentUser.getUid());
 
                     if (userId.equals(currentUser.getUid()) || event.creatorId.equals(currentUser.getUid())){
-                        Log.d("USERID", currentUser.getUid());
+                        Log.d("USERID", String.valueOf(currentUser));
                         isInterested = true;
                         interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_24));
                     }else {

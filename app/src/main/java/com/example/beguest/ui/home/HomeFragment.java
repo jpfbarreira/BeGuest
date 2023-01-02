@@ -128,33 +128,37 @@ public class HomeFragment extends Fragment {
                 for(DataSnapshot dataSnapshot: snapshot.getChildren()){
                     String eventID = dataSnapshot.getKey();
                     Event event = dataSnapshot.getValue(Event.class);
-
+                    Log.d("Maria", String.valueOf(events));
                     event.setEventID(eventID);
+
+                    if (event.creatorId.equals(currentUser.getUid())){
+                        if(!events.contains(event)){
+                            events.add(event);
+                            Log.d("Maria Events", String.valueOf(events));
+                            recyclerView.setAdapter(eventAdpter);
+                        }
+                    }
 
                     DatabaseReference eventReference = reference.child(eventID);
                     DatabaseReference registeredUsersRef = eventReference.child("Registered Users");
-//                    //add to home events created by user
-//                    if (){
-//                        if(!events.contains(event)){
-//                            events.add(event);
-//                        }
-//                    }
+
                     registeredUsersRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            //events.clear();
                             for(DataSnapshot dataSnapshot: snapshot.getChildren()){
                                 String userId = String.valueOf(dataSnapshot.getValue(String.class));
-                                Log.d("Userid", userId);
+
                                 //add to home events that the user is registered in
-                                if (userId.equals(currentUser.getUid()) || String.valueOf(event.creatorId).equals(String.valueOf(currentUser.getUid()))){
+                                if (userId.equals(currentUser.getUid())){
                                     if(!events.contains(event)){
                                         events.add(event);
                                         Log.d("Maria Events", String.valueOf(events));
                                         recyclerView.setAdapter(eventAdpter);
                                     }
                                 }
-
                             }
+                            eventAdpter.notifyDataSetChanged();
                         }
 
                         @Override

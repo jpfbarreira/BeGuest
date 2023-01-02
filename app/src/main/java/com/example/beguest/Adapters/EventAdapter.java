@@ -65,26 +65,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventAdapter
             e.printStackTrace();
         }
         //image
+        Drawable photo = context.getResources().getDrawable(event.eventPhoto);
 
-        ArrayList<Drawable> photos = new ArrayList<>();
-
-        Drawable photo1 = context.getResources().getDrawable(R.drawable.photo_events1);
-        Drawable photo2 = context.getResources().getDrawable(R.drawable.photo_events2);
-        Drawable photo3 = context.getResources().getDrawable(R.drawable.photo_events3);
-        Drawable photo4 = context.getResources().getDrawable(R.drawable.photo_events4);
-        Drawable photo5 = context.getResources().getDrawable(R.drawable.photo_events5);
-        Drawable photo6 = context.getResources().getDrawable(R.drawable.photo_events6);
-        Drawable photo7 = context.getResources().getDrawable(R.drawable.photo_events7);
-        Drawable photo8 = context.getResources().getDrawable(R.drawable.photo_events8);
-        Drawable photo9 = context.getResources().getDrawable(R.drawable.photo_events9);
-        Drawable photo10 = context.getResources().getDrawable(R.drawable.photo_events10);
-
-        photos.add(photo1);photos.add(photo2);photos.add(photo3);photos.add(photo4);photos.add(photo5);photos.add(photo6);
-        photos.add(photo7);photos.add(photo8);photos.add(photo9);photos.add(photo10);
-
-        int random = new Random().nextInt(photos.size());
-
-        holder.photoEventCard.setBackground(photos.get(random));
+        holder.photoEventCard.setBackground(photo);
 
         holder.eventCard.setOnClickListener(new View.OnClickListener() {
             @Override
