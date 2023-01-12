@@ -116,39 +116,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <androidx.cardview.widget.CardView
-            android:id="@+id/number_all_person_registred_image"
+            android:id="@+id/users_registered_cardView"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginHorizontal="5dp"
-            app:cardBackgroundColor="@color/white"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#E95C0202"
             android:layout_marginStart="5dp"
             app:cardCornerRadius="250dp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/users_recycle_view"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/users_registered_cardView"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                app:cardBackgroundColor="#E95C0202"
-                app:cardCornerRadius="250dp">
-
-                <TextView
-                    android:id="@+id/users_registered"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/poppins_light"
-                    android:gravity="center"
-                    android:text="+8"
-                    android:textColor="@color/white"
-                    android:textSize="15sp" />
-
-            </androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/users_registered"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/poppins_light"
+                android:gravity="center"
+                android:text="+8"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                 />
 
         </androidx.cardview.widget.CardView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

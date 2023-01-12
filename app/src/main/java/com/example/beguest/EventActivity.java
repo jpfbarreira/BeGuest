@@ -78,7 +78,7 @@ public class EventActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.users_recycle_view);
 
         users_registered = findViewById(R.id.users_registered);
-        users_registered_cardView = findViewById(R.id.number_all_person_registred_image);
+        users_registered_cardView = findViewById(R.id.users_registered_cardView);
         //setTexts
         eventTitleTextView.setText(event.title);
         eventDescriptionTextView.setText(event.description);
@@ -128,11 +128,11 @@ public class EventActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 registeredUsers.clear();
                 registeredUsers.add(event.creatorId);
+
                 for(DataSnapshot dataSnapshot: snapshot.getChildren()){
                     String userId = String.valueOf(dataSnapshot.getValue(String.class));
                     registeredUsers.add(userId);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
-
 
                     if(registeredUsers.size()>3){
                         ArrayList<String> list = new ArrayList<>();
@@ -144,11 +144,13 @@ public class EventActivity extends AppCompatActivity {
                         recyclerView.setAdapter(userAdpter);
 
                         users_registered_cardView.setVisibility(View.VISIBLE);
+                        users_registered.setVisibility(View.VISIBLE);
                         String numberOfUsers = String.valueOf(registeredUsers.size() - 3);
                         users_registered.setText("+" + numberOfUsers);
 
                     } else {
                         users_registered_cardView.setVisibility(View.INVISIBLE);
+                        users_registered.setVisibility(View.INVISIBLE);
                         userAdpter = new RegisteredUsersAdapter(getApplicationContext(), registeredUsers);
                         recyclerView.setAdapter(userAdpter);
                     }
