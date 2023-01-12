@@ -44,8 +44,6 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Ho
 
         holder.eventTitle.setText(event.getTitle());
 
-
-
         holder.eventCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,7 +72,5 @@ public class HomeEventsAdapter extends RecyclerView.Adapter<HomeEventsAdapter.Ho
             eventTitle = itemView.findViewById(R.id.card_event_tile);
             eventCard = itemView.findViewById(R.id.card_event);
         }
-
-
     }
 }

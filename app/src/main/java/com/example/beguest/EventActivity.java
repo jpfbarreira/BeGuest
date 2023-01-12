@@ -2,6 +2,9 @@ package com.example.beguest;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -12,10 +15,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.beguest.Adapters.EventAdapter;
 import com.example.beguest.Adapters.HomeEventsAdapter;
+import com.example.beguest.Adapters.RegisteredUsersAdapter;
 import com.example.beguest.CreateEventFragments.Event;
 import com.example.beguest.ui.home.HomeFragment;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +33,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.net.URI;
@@ -39,8 +50,11 @@ public class EventActivity extends AppCompatActivity {
     private MaterialButton interestedBtn;
     private Boolean isInterested;
     private TextView eventTitleTextView, eventDescriptionTextView, eventLocationTextView, eventDateTextView, users_registered;
-
+    private CardView users_registered_cardView;
     private DatabaseReference reference;
+
+    private RecyclerView recyclerView;
+    public static RegisteredUsersAdapter userAdpter;
 
 
     @Override
@@ -61,11 +75,10 @@ public class EventActivity extends AppCompatActivity {
         eventLocationTextView = findViewById(R.id.event_location);
         eventDateTextView = findViewById(R.id.event_time);
         editEventBtn = findViewById(R.id.edit_event_btn);
-        first_person_photo = findViewById(R.id.first_person_photo);
-        second_person_photo = findViewById(R.id.second_person_photo);
-        third_person_photo = findViewById(R.id.third_person_photo);
-        users_registered = findViewById(R.id.users_registered);
+        recyclerView = findViewById(R.id.users_recycle_view);
 
+        users_registered = findViewById(R.id.users_registered);
+        users_registered_cardView = findViewById(R.id.number_all_person_registred_image);
         //setTexts
         eventTitleTextView.setText(event.title);
         eventDescriptionTextView.setText(event.description);
@@ -102,6 +115,8 @@ public class EventActivity extends AppCompatActivity {
         //photos
 //        Uri userProfilePic = currentUser.getPhotoUrl();
 //        Picasso.get().load(userProfilePic).into(first_person_photo);
+        //getUserInfo(event.creatorId);
+
 
         reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app")
                 .getReference("Registered Events");
@@ -112,10 +127,31 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 registeredUsers.clear();
+                registeredUsers.add(event.creatorId);
                 for(DataSnapshot dataSnapshot: snapshot.getChildren()){
                     String userId = String.valueOf(dataSnapshot.getValue(String.class));
-                    Log.d("USERID", userId);
-//                    Log.d("USERID", currentUser.getUid());
+                    registeredUsers.add(userId);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+
+
+                    if(registeredUsers.size()>3){
+                        ArrayList<String> list = new ArrayList<>();
+                        for(int i = 0; i < 3; i++){
+                            list.add(registeredUsers.get(i));
+                        }
+                        Log.d("registred users", String.valueOf(list));
+                        userAdpter = new RegisteredUsersAdapter(getApplicationContext(), list);
+                        recyclerView.setAdapter(userAdpter);
+
+                        users_registered_cardView.setVisibility(View.VISIBLE);
+                        String numberOfUsers = String.valueOf(registeredUsers.size() - 3);
+                        users_registered.setText("+" + numberOfUsers);
+
+                    } else {
+                        users_registered_cardView.setVisibility(View.INVISIBLE);
+                        userAdpter = new RegisteredUsersAdapter(getApplicationContext(), registeredUsers);
+                        recyclerView.setAdapter(userAdpter);
+                    }
 
                     if (userId.equals(currentUser.getUid()) || event.creatorId.equals(currentUser.getUid())){
                         Log.d("USERID", String.valueOf(currentUser));
@@ -156,6 +192,7 @@ public class EventActivity extends AppCompatActivity {
         if (Objects.equals(event.creatorId, currentUser.getUid())){
             interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_24));
             interestedBtn.setClickable(false);
+
             editEventBtn.setVisibility(View.VISIBLE);
         }else {
             interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_border_24));
@@ -167,5 +204,13 @@ public class EventActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+    }
+
+
+    public void getUserInfo(String userId) {
+
+
+//        Log.d("MYPHOTO", String.valueOf(getImage.getDownloadUrl()));
+
     }
 }

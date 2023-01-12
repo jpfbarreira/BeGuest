@@ -3,6 +3,7 @@ package com.example.beguest.ui.profile;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -80,7 +81,7 @@ public class Profile extends Fragment {
     private String email;
     private  int points;
 
-    private ImageView settingsBtn;
+    private ConstraintLayout settingsBtn;
 
     private TextView textViewUsername;
     private TextView textViewEmail;

@@ -90,6 +90,7 @@ public class HomeFragment extends Fragment {
         FirebaseUser currentUser = auth.getCurrentUser();
 
         storageReference = FirebaseStorage.getInstance().getReference("User Pics");
+
         userProfilePic = currentUser.getPhotoUrl();
 
         sharedViewModel.getUserProfilePic().observe(getViewLifecycleOwner(), new Observer<Uri>() {
@@ -118,7 +119,6 @@ public class HomeFragment extends Fragment {
 
         events = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
-
         eventAdpter = new HomeEventsAdapter(this.getContext(), events);
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -153,7 +153,6 @@ public class HomeFragment extends Fragment {
                                 if (userId.equals(currentUser.getUid())){
                                     if(!events.contains(event)){
                                         events.add(event);
-                                        Log.d("Maria Events", String.valueOf(events));
                                         recyclerView.setAdapter(eventAdpter);
                                     }
                                 }
@@ -207,7 +206,7 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-    private void getUserInfo(FirebaseUser currentUser) {
+    public void getUserInfo(FirebaseUser currentUser) {
         String userId = currentUser.getUid();
 
         DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app").getReference("Registered Users");

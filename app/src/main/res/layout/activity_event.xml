@@ -109,86 +109,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_time">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/first_person_registred_image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="16dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="250dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/users_recycle_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                app:cardCornerRadius="250dp">
-
-                <ImageView
-                    android:id="@+id/first_person_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
-
-            </androidx.cardview.widget.CardView>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/second_person_registred_image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="5dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="250dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/first_person_registred_image"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                app:cardCornerRadius="250dp">
-
-                <ImageView
-                    android:id="@+id/second_person_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
-
-            </androidx.cardview.widget.CardView>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/third_person_registred_image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="5dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="250dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/second_person_registred_image"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                app:cardCornerRadius="250dp">
-
-                <ImageView
-                    android:id="@+id/third_person_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
-
-            </androidx.cardview.widget.CardView>
-
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/number_all_person_registred_image"
@@ -196,12 +122,14 @@
             android:layout_height="40dp"
             android:layout_marginHorizontal="5dp"
             app:cardBackgroundColor="@color/white"
+            android:layout_marginStart="5dp"
             app:cardCornerRadius="250dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/third_person_registred_image"
+            app:layout_constraintStart_toEndOf="@+id/users_recycle_view"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/users_registered_cardView"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"

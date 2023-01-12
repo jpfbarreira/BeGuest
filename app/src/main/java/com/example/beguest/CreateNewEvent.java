@@ -183,7 +183,6 @@ public class CreateNewEvent extends AppCompatActivity {
         int random = new Random().nextInt(photos.size());
         int eventPhoto = photos.get(random);
 
-
         String eventID = reference.push().getKey();
         Log.d("EVENT",eventID);
 

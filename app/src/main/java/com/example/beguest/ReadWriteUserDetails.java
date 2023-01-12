@@ -1,8 +1,9 @@
 package com.example.beguest;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ReadWriteUserDetails {
+public class ReadWriteUserDetails implements Serializable {
     public String username;
     public int points;
     public String instagram;
