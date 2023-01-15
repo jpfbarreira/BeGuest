@@ -14,8 +14,10 @@
         android:background="@drawable/event_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/back_toAtivity_btn"
@@ -45,12 +47,12 @@
         android:layout_marginHorizontal="16dp"
         android:fontFamily="@font/poppins_bold"
         android:text="Maria Xoxo's Event"
+        android:layout_marginBottom="20dp"
         android:textColor="@color/white"
         android:textSize="30sp"
-        android:layout_marginTop="250dp"
+        app:layout_constraintBottom_toTopOf="@+id/event_description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/event_description"
@@ -59,45 +61,50 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="15dp"
         android:fontFamily="@font/poppins_light"
+        android:layout_marginBottom="25dp"
         android:justificationMode="inter_word"
         android:text="We offer a selection of personalised birthday invitations suitable for both men and women, and for a wide range of party styles or themes."
         android:textColor="@color/white"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/event_location"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_title" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/event_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="15dp"
         android:drawableLeft="@drawable/ic_baseline_location_on_24"
         android:drawablePadding="5dp"
         android:fontFamily="@font/poppins_light"
+        android:layout_marginBottom="25dp"
         android:justificationMode="inter_word"
         android:text="Praça Dom João da Câmara 4 2ºD, 1200-147 Lisboa, Portugal"
         android:textColor="@color/white"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/event_time"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_description" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/event_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="15dp"
         android:drawableStart="@drawable/ic_baseline_date_range_24"
         android:drawablePadding="5dp"
-        android:layout_marginTop="15dp"
         android:fontFamily="@font/poppins_light"
         android:justificationMode="inter_word"
         android:text="31 December, 17:30PM"
         android:textColor="@color/white"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@+id/event_location" />
+        android:layout_marginBottom="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
@@ -105,14 +112,17 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/interested_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_time">
+        android:layout_marginBottom="25dp"
+        >
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/users_recycle_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -122,10 +132,10 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            app:cardBackgroundColor="#E95C0202"
             android:layout_marginStart="5dp"
-            app:cardCornerRadius="250dp"
             android:visibility="invisible"
+            app:cardBackgroundColor="#E95C0202"
+            app:cardCornerRadius="250dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/users_recycle_view"
             app:layout_constraintTop_toTopOf="parent">
@@ -135,11 +145,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/poppins_light"
+                android:includeFontPadding="false"
                 android:gravity="center"
-                android:text="+8"
+                android:text=""
                 android:textColor="@color/white"
-                android:textSize="15sp"
-                 />
+                android:textSize="15sp" />
 
         </androidx.cardview.widget.CardView>
 
@@ -153,14 +163,14 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_border_buttons"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="30dp"
         app:iconTint="@color/white"
         app:iconGravity="textStart"
         android:text="Interested"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/imageView4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
 
 
