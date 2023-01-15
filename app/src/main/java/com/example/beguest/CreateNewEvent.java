@@ -109,21 +109,21 @@ public class CreateNewEvent extends AppCompatActivity {
             }
         });
 
-        stateProgressBar.setOnStateItemClickListener(new OnStateItemClickListener() {
-            @Override
-            public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
-                if(stateNumber == 1){
-                    stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.ONE);
-                    FragmentReplacer(fragment1);
-                } else if(stateNumber == 2){
-                    stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
-                    FragmentReplacer(fragment2);
-                }else if(stateNumber == 3){
-                    stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.THREE);
-                    FragmentReplacer(fragment3);
-                }
-            }
-        });
+//        stateProgressBar.setOnStateItemClickListener(new OnStateItemClickListener() {
+//            @Override
+//            public void onStateItemClick(StateProgressBar stateProgressBar, StateItem stateItem, int stateNumber, boolean isCurrentState) {
+//                if(stateNumber == 1){
+//                    stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.ONE);
+//                    FragmentReplacer(fragment1);
+//                } else if(stateNumber == 2){
+//                    stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
+//                    FragmentReplacer(fragment2);
+//                }else if(stateNumber == 3){
+//                    stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.THREE);
+//                    FragmentReplacer(fragment3);
+//                }
+//            }
+//        });
     }
 
     private void FragmentReplacer(Fragment fragment) {

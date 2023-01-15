@@ -25,6 +25,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.beguest.CreateEventFragments.Create_Event_Fragment2;
 import com.example.beguest.CreateEventFragments.Create_Event_ViewModel;
@@ -122,6 +123,7 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
                             mMap.animateCamera(cameraUpdate);
                             Log.d("MAPSSS", address);
                             createEventViewModelChild.setLocation(address);
+                            Toast.makeText(getContext(), "Location added", Toast.LENGTH_SHORT).show();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -175,11 +177,10 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
 
         Location location = locationManager.getLastKnownLocation(locationManager
                 .getBestProvider(criteria, false));
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-
 
         if (location != null) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
             LatLng myLocation = new LatLng(latitude,
                     longitude);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
@@ -197,6 +198,7 @@ public class Google_Maps_Fragment extends Fragment implements OnMapReadyCallback
                     List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
                     address = addressList.get(0).getAddressLine(0);
                     createEventViewModelChild.setLocation(address);
+                    Toast.makeText(getContext(), "Location added", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

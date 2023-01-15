@@ -179,6 +179,7 @@
                 android:scaleType="fitXY"
                 app:shapeAppearanceOverlay="@style/roundedCornersImageView"
                 app:srcCompat="@drawable/recomended_banner" />
+
             <TextView
                 android:id="@+id/textView5"
                 android:layout_width="wrap_content"

@@ -1,6 +1,7 @@
 package com.example.beguest.ui.home;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
@@ -22,10 +23,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.beguest.Adapters.HomeEventsAdapter;
 import com.example.beguest.CircleTransform;
 import com.example.beguest.CreateEventFragments.Event;
+import com.example.beguest.EventActivity;
 import com.example.beguest.R;
 import com.example.beguest.ReadWriteUserDetails;
 import com.example.beguest.SharedViewModel;
 import com.example.beguest.databinding.FragmentHomeBinding;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -85,6 +88,7 @@ public class HomeFragment extends Fragment {
         recommendedEventDescription = root.findViewById(R.id.recommended_card_event_description);
         recommendedEventLocation = root.findViewById(R.id.recommended_card_event_location);
         recommendedEventDate = root.findViewById(R.id.recommended_card_event_date);
+        ShapeableImageView recommendedEventBtn = root.findViewById(R.id.shapeableImageView);
 
         auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
@@ -118,6 +122,7 @@ public class HomeFragment extends Fragment {
 
 
         events = new ArrayList<>();
+        ArrayList<Event> allEvents = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
         eventAdpter = new HomeEventsAdapter(this.getContext(), events);
 
@@ -128,13 +133,15 @@ public class HomeFragment extends Fragment {
                 for(DataSnapshot dataSnapshot: snapshot.getChildren()){
                     String eventID = dataSnapshot.getKey();
                     Event event = dataSnapshot.getValue(Event.class);
-                    Log.d("Maria", String.valueOf(events));
+
+                    allEvents.add(event);
+                    Log.d("all events", String.valueOf(allEvents.size()));
+
                     event.setEventID(eventID);
 
                     if (event.creatorId.equals(currentUser.getUid())){
                         if(!events.contains(event)){
                             events.add(event);
-                            Log.d("Maria Events", String.valueOf(events));
                             recyclerView.setAdapter(eventAdpter);
                         }
                     }
@@ -146,8 +153,14 @@ public class HomeFragment extends Fragment {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             //events.clear();
+                            ArrayList<String> usersIdsArray = new ArrayList<>();
+                            ArrayList<Integer> userCount = new ArrayList<>();
                             for(DataSnapshot dataSnapshot: snapshot.getChildren()){
                                 String userId = String.valueOf(dataSnapshot.getValue(String.class));
+                                usersIdsArray.add(userId);
+                                userCount.add(usersIdsArray.size());
+                                Log.d("all users event", String.valueOf(usersIdsArray.size()));
+
 
                                 //add to home events that the user is registered in
                                 if (userId.equals(currentUser.getUid())){
@@ -156,6 +169,24 @@ public class HomeFragment extends Fragment {
                                         recyclerView.setAdapter(eventAdpter);
                                     }
                                 }
+                                int max = userCount.get(0);
+                                for(int i = 1; i<userCount.size();i++){
+                                    if (max < userCount.get(i)){
+                                        max = userCount.get(i);
+                                        recomendedEvent(event);
+
+                                        recommendedEventBtn.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent intent = new Intent(getContext(), EventActivity.class);
+                                                intent.putExtra("Event", event);
+                                                intent.putExtra("EventId", event.eventID);
+                                                getContext().startActivity(intent);
+                                            }
+                                        });
+                                    }
+                                }
+
                             }
                             eventAdpter.notifyDataSetChanged();
                         }
@@ -168,32 +199,7 @@ public class HomeFragment extends Fragment {
 
                     //recommmended event
                     //Event with most people registred in the area gets the recommended position, for now it's the event with this title
-                    if(Objects.equals(event.title, "Trico's Party")){
-                        String[] months = new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-                        recommendedEventTitle.setText(event.title);
-                        recommendedEventDescription.setText(event.description);
-                        recommendedEventLocation.setText(event.location);
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy");
-                        try {
-                            Date eventDate = simpleDateFormat.parse(event.date);
-                            String eventDay = String.valueOf(eventDate.getDate());
-                            int eventMonth = eventDate.getMonth();
-                            String eventTime = event.time;
 
-                            String hour = eventTime.split(":")[0];
-
-                            if(Integer.parseInt(hour) > 12){
-                                recommendedEventDate.setText(eventDay + " " +  months[eventMonth]
-                                        + ", " + eventTime + " " + "PM");
-                            }else {
-                                recommendedEventDate.setText(eventDay + " " +  months[eventMonth]
-                                        + ", " + eventTime + " " + "AM");
-                            }
-
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
                 eventAdpter.notifyDataSetChanged();
             }
@@ -230,6 +236,35 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getContext(), "Something Went Wrong", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+    }
+
+    public void recomendedEvent(Event event){
+        String[] months = new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        recommendedEventTitle.setText(event.title);
+        recommendedEventDescription.setText(event.description);
+        recommendedEventLocation.setText(event.location);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy");
+        try {
+            Date eventDate = simpleDateFormat.parse(event.date);
+            String eventDay = String.valueOf(eventDate.getDate());
+            int eventMonth = eventDate.getMonth();
+            String eventTime = event.time;
+
+            String hour = eventTime.split(":")[0];
+
+            if(Integer.parseInt(hour) > 12){
+                recommendedEventDate.setText(eventDay + " " +  months[eventMonth]
+                        + ", " + eventTime + " " + "PM");
+            }else {
+                recommendedEventDate.setText(eventDay + " " +  months[eventMonth]
+                        + ", " + eventTime + " " + "AM");
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

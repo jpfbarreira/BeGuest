@@ -112,12 +112,6 @@ public class EventActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
 
-        //photos
-//        Uri userProfilePic = currentUser.getPhotoUrl();
-//        Picasso.get().load(userProfilePic).into(first_person_photo);
-        //getUserInfo(event.creatorId);
-
-
         reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app")
                 .getReference("Registered Events");
         DatabaseReference eventReference = reference.child(eventId);
@@ -133,13 +127,12 @@ public class EventActivity extends AppCompatActivity {
                     String userId = String.valueOf(dataSnapshot.getValue(String.class));
                     registeredUsers.add(userId);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
-
                     if(registeredUsers.size()>3){
                         ArrayList<String> list = new ArrayList<>();
                         for(int i = 0; i < 3; i++){
                             list.add(registeredUsers.get(i));
                         }
-                        Log.d("registred users", String.valueOf(list));
+
                         userAdpter = new RegisteredUsersAdapter(getApplicationContext(), list);
                         recyclerView.setAdapter(userAdpter);
 
@@ -156,14 +149,16 @@ public class EventActivity extends AppCompatActivity {
                     }
 
                     if (userId.equals(currentUser.getUid()) || event.creatorId.equals(currentUser.getUid())){
-                        Log.d("USERID", String.valueOf(currentUser));
                         isInterested = true;
                         interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_24));
-                    }else {
-                        isInterested = false;
-                        interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_border_24));
                     }
                 }
+                if (registeredUsers.size() == 1){
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+                    userAdpter = new RegisteredUsersAdapter(getApplicationContext(), registeredUsers);
+                    recyclerView.setAdapter(userAdpter);
+                }
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -186,6 +181,15 @@ public class EventActivity extends AppCompatActivity {
                 }else {
                     isInterested = false;
                     registeredUsersRef.child(currentUser.getUid()).removeValue();
+
+                    for(int i = 0; i < registeredUsers.size(); i++){
+                        if(Objects.equals(registeredUsers.get(i), currentUser.getUid())){
+                            registeredUsers.remove(i);
+                            userAdpter.notifyDataSetChanged();
+
+                        };
+                    }
+
                     interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_border_24));
                 }
             }
@@ -206,13 +210,16 @@ public class EventActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-    }
 
-
-    public void getUserInfo(String userId) {
-
-
-//        Log.d("MYPHOTO", String.valueOf(getImage.getDownloadUrl()));
-
+        users_registered_cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(registeredUsers.size()>3) {
+                    Intent intent1 = new Intent(EventActivity.this, RegisteredUsersListActivity.class);
+                    intent1.putExtra("usersRegistered", registeredUsers);
+                    startActivity(intent1);
+                }
+            }
+        });
     }
 }

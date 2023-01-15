@@ -22,7 +22,7 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/rounded_borders_no_color"
         android:backgroundTint="#272727"
-        android:hint="Choose a location for your event"
+        android:hint="Choose a location"
         android:textColor="@color/white"
         android:textColorHint="#6A6A6A"
         />
