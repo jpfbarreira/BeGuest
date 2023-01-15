@@ -81,7 +81,7 @@ public class NotificationsFragment extends Fragment implements
     FusedLocationProviderClient client;
     double userLat;
     double userLong;
-    int distanceFilter = 15;
+    int distanceFilter;
     private ActivityResultLauncher<String[]> activityResultLauncher;
     private ImageView searchLocationBtn;
     private AutoCompleteTextView searchLocationEditText;
@@ -99,8 +99,9 @@ public class NotificationsFragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        NotificationsViewModel notificationsViewModel =
-                new ViewModelProvider(this).get(NotificationsViewModel.class);
+        SharedPreferences pref = getActivity().getSharedPreferences("MyPref", 0);
+        // 0 - for private mode
+        distanceFilter = pref.getInt("distance_progress", 15);
 
         IntentFilter filter = new IntentFilter("data");
         BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -317,7 +318,7 @@ public class NotificationsFragment extends Fragment implements
         double km = Math.round(AVERAGE_RADIUS_OF_EARTH_KM * c);
         Log.d("calcDistance", "Distance is " + String.valueOf(km));
 
-        if(km >= distanceFilter) {
+        if(km <= distanceFilter) {
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
             markerOptions.title("Your title");
@@ -336,9 +337,6 @@ public class NotificationsFragment extends Fragment implements
 
     }
 
-
-
-
     @Override
     public void onStart() {
         super.onStart();
@@ -354,6 +352,8 @@ public class NotificationsFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
+        googleApiClient.stopAutoManage(getActivity());
+        googleApiClient.disconnect();
         mapView.onPause();
     }
 
