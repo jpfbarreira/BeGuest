@@ -49,7 +49,7 @@ public class EventActivity extends AppCompatActivity {
     private ImageView backbtn, editEventBtn, first_person_photo, second_person_photo, third_person_photo;
     private MaterialButton interestedBtn;
     private Boolean isInterested;
-    private TextView eventTitleTextView, eventDescriptionTextView, eventLocationTextView, eventDateTextView, users_registered;
+    private TextView eventTitleTextView, eventDescriptionTextView, eventLocationTextView, eventDateTextView, users_registered, eventMaxPeopleTextView;
     private CardView users_registered_cardView;
     private DatabaseReference reference;
 
@@ -76,6 +76,7 @@ public class EventActivity extends AppCompatActivity {
         eventDateTextView = findViewById(R.id.event_time);
         editEventBtn = findViewById(R.id.edit_event_btn);
         recyclerView = findViewById(R.id.users_recycle_view);
+        eventMaxPeopleTextView = findViewById(R.id.event_max_people);
 
         users_registered = findViewById(R.id.users_registered);
         users_registered_cardView = findViewById(R.id.users_registered_cardView);
@@ -83,6 +84,10 @@ public class EventActivity extends AppCompatActivity {
         eventTitleTextView.setText(event.title);
         eventDescriptionTextView.setText(event.description);
         eventLocationTextView.setText(event.location);
+        if (event.maxPeople != ""){
+            eventMaxPeopleTextView.setText(String.valueOf(event.maxPeople));
+            eventMaxPeopleTextView.setVisibility(View.VISIBLE);
+        }
 
         //Date
         String[] months = new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
