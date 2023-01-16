@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beguest.CreateEventFragments.Event;
@@ -66,7 +67,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventAdapter
             e.printStackTrace();
         }
         //image
-        Drawable photo = context.getResources().getDrawable(event.eventPhoto);
+        Drawable photo = ContextCompat.getDrawable(context ,event.eventPhoto);
 
         holder.photoEventCard.setBackground(photo);
 

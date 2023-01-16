@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -16,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -23,13 +27,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beguest.Adapters.HomeEventsAdapter;
 import com.example.beguest.CreateEventFragments.Event;
 import com.example.beguest.EventActivity;
-import com.example.beguest.MapFilters;
 import com.example.beguest.PlaceAutocompleteAdapter;
 import com.example.beguest.R;
 import com.example.beguest.databinding.FragmentNotificationsBinding;
@@ -43,6 +47,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -50,6 +56,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,6 +68,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.xw.repo.BubbleSeekBar;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -96,26 +104,18 @@ public class NotificationsFragment extends Fragment implements
     private int id;
     private int position = 0;
     ArrayList<Event> events = new ArrayList<Event>();
+    private int distance_progress;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        NotificationsViewModel notificationsViewModel =
-                new ViewModelProvider(this).get(NotificationsViewModel.class);
-
-        IntentFilter filter = new IntentFilter("data");
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                distanceFilter = intent.getIntExtra("distance", 15);
-                Log.d("distanceFilter", String.valueOf(distanceFilter));
-                getEventsLocations();
-            }
-        };
-        getActivity().registerReceiver(receiver,filter);
 
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        SharedPreferences pref = getContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        distance_progress = pref.getInt("distance_progress", 15);
+        getEventsLocations();
 
         mapView = root.findViewById(R.id.google_map);
         mapView.onCreate(savedInstanceState);
@@ -155,8 +155,56 @@ public class NotificationsFragment extends Fragment implements
         filterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(NotificationsFragment.this.getContext(), MapFilters.class);
-                startActivity(intent);
+                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext(), R.style.CustomBottomSheetDialog);
+                View bottomSheetView = getLayoutInflater().inflate(R.layout.activity_map_filters, null);
+
+                bottomSheetDialog.setContentView(bottomSheetView);
+                bottomSheetDialog.show();
+
+
+                SharedPreferences.Editor editor = pref.edit();
+
+                BubbleSeekBar bubbleSeekBar = bottomSheetDialog.findViewById(R.id.demo_1_seek_bar);
+
+                Button save_btn = bottomSheetDialog.findViewById(R.id.save_btn);
+
+                distance_progress = pref.getInt("distance_progress", 15);
+                bubbleSeekBar.setProgress(distance_progress);
+
+                bubbleSeekBar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bubbleSeekBar.correctOffsetWhenContainerOnScrolling();
+                    }
+                });
+
+//                back_btn.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        onBackPressed();
+//                    }
+//                });
+
+                save_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        distance_progress = (int) bubbleSeekBar.getProgress();
+                        bubbleSeekBar.setProgress(distance_progress);
+                        editor.putInt("distance_progress", distance_progress);
+                        editor.commit();
+
+//                        Intent intent = new Intent("data");
+//                        intent.putExtra("distance", distance_progress);
+//                        MapFilters.this.sendBroadcast(intent);
+
+//                        onBackPressed();
+                        bottomSheetDialog.dismiss();
+                        getEventsLocations();
+                        Log.d("distanceFilter", String.valueOf(distance_progress));
+                    }
+                });
+//                Intent intent = new Intent(NotificationsFragment.this.getContext(), MapFilters.class);
+//                startActivity(intent);
             }
         });
 
@@ -181,6 +229,7 @@ public class NotificationsFragment extends Fragment implements
                                     .position(latLng)
                                     .title(addressList.get(0).getAddressLine(0))
                             );
+
                             mMap.animateCamera(cameraUpdate);
                         }
                     } catch (IOException e) {
@@ -231,7 +280,7 @@ public class NotificationsFragment extends Fragment implements
                         mMap = googleMap;
                         googleMap.setMapStyle(new MapStyleOptions(getResources()
                                 .getString(R.string.style_json)));
-
+                        mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                                 != PackageManager.PERMISSION_GRANTED
                                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -306,7 +355,7 @@ public class NotificationsFragment extends Fragment implements
                                 Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                                 Log.d("location", "Location is: " + map.get("location"));
                             try {
-                                addressToCoords(map.get("location").toString(), eventID, position);
+                                addressToCoords(map.get("location").toString(), eventID, position, event);
                                 position++;
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -329,15 +378,15 @@ public class NotificationsFragment extends Fragment implements
 
     }
 
-    public void addressToCoords(String address, String eventID, int position) throws IOException {
+    public void addressToCoords(String address, String eventID, int position, Event event) throws IOException {
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         List<Address> addressList = geocoder.getFromLocationName(address, 1);
         LatLng latLng = new LatLng(addressList.get(0).getLatitude(), addressList.get(0).getLongitude());
         Log.d("latLng is ", latLng.toString());
-        calcDistance(latLng, eventID, position);
+        calcDistance(latLng, eventID, position, event);
     }
 
-    public void calcDistance(LatLng latLng, String eventID, int position) {
+    public void calcDistance(LatLng latLng, String eventID, int position, Event event) {
         final double AVERAGE_RADIUS_OF_EARTH_KM = 6371;
         double latDistance = Math.toRadians(userLat - latLng.latitude);
         double lngDistance = Math.toRadians(userLong - latLng.longitude);
@@ -351,18 +400,23 @@ public class NotificationsFragment extends Fragment implements
         double km = Math.round(AVERAGE_RADIUS_OF_EARTH_KM * c);
         Log.d("calcDistance", "Distance is " + String.valueOf(km));
 
-        if(km <= distanceFilter) {
+        if(km <= distance_progress) {
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
 
-            Marker mLocationMarker = mMap.addMarker(markerOptions); // add the marker to Map
+            Marker mLocationMarker = mMap.addMarker(markerOptions
+                    .icon(BitmapFromVector(getContext(), R.drawable.pin_placeholder_svgrepo_com))); // add the marker to Map
+
             mLocationMarker.setTag(id);
+            mLocationMarker.showInfoWindow();
+            Log.d("my title", event.title);
 
             AllMarkers.add(mLocationMarker); // add the marker to array
             AlleventID.add(eventID);
             AlleventPosition.add(position);
             Log.d("marker", "Marker added");
             Log.d("marker", eventID);
+
             id++;
         }
     }
@@ -434,6 +488,28 @@ public class NotificationsFragment extends Fragment implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
+        // below line is use to generate a drawable.
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+
+        // below line is use to set bounds to our vector drawable.
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+
+        // below line is use to create a bitmap for our
+        // drawable which we have added.
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+        // below line is use to add bitmap in our canvas.
+        Canvas canvas = new Canvas(bitmap);
+
+        // below line is use to draw our
+        // vector drawable in canvas.
+        vectorDrawable.draw(canvas);
+
+        // after generating our bitmap we are returning our bitmap.
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
 }

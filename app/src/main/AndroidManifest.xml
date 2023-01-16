@@ -17,13 +17,6 @@
         android:theme="@style/Theme.BeGuest"
         tools:targetApi="31">
         <activity
-            android:name=".MapFilters"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".RegisteredUsersListActivity"
             android:exported="false">
             <meta-data
