@@ -56,11 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
-        //SHAKER PART
-            Shaker shaker = new Shaker();
-            shaker.Accelerometer(getApplicationContext());
-        //
-
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

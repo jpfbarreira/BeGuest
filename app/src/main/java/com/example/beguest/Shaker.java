@@ -61,6 +61,7 @@ public class Shaker {
 
             if (yChange <-2){
                 shakeScore += 2;
+
                 Log.d("Direction", "Up to Down");
                 Log.d("Score", String.valueOf(shakeScore));
             }
@@ -84,6 +85,8 @@ public class Shaker {
 
     public void stopShaker(){
         sensorManager.unregisterListener(sensorEventListener);
+        sensorManager = null;
+
     }
 
     /* Para adicionar o shaker é só fazer isto numa activity/class
