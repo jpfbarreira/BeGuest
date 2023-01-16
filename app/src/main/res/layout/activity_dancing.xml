@@ -70,7 +70,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView24"
+            android:id="@+id/user_points"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_light"
@@ -89,7 +89,7 @@
             android:layout_marginEnd="15dp"
             android:background="@drawable/royal_crown_made_of_triangle_outlines_and_circle_shapes_svgrepo_com"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/textView24"
+            app:layout_constraintEnd_toStartOf="@+id/user_points"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
