@@ -52,6 +52,7 @@ public class EventActivity extends AppCompatActivity {
     private TextView eventTitleTextView, eventDescriptionTextView, eventLocationTextView, eventDateTextView, users_registered, eventMaxPeopleTextView;
     private CardView users_registered_cardView;
     private DatabaseReference reference;
+    private TextView checkInBtn;
 
     private RecyclerView recyclerView;
     public static RegisteredUsersAdapter userAdpter;
@@ -77,6 +78,8 @@ public class EventActivity extends AppCompatActivity {
         editEventBtn = findViewById(R.id.edit_event_btn);
         recyclerView = findViewById(R.id.users_recycle_view);
         eventMaxPeopleTextView = findViewById(R.id.event_max_people);
+        //check in btn
+        checkInBtn = findViewById(R.id.check_in_btn);
 
         users_registered = findViewById(R.id.users_registered);
         users_registered_cardView = findViewById(R.id.users_registered_cardView);
@@ -204,7 +207,11 @@ public class EventActivity extends AppCompatActivity {
             interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_24));
             interestedBtn.setClickable(false);
 
-            editEventBtn.setVisibility(View.VISIBLE);
+            if (checkInBtn.getVisibility() != View.VISIBLE){
+                editEventBtn.setVisibility(View.VISIBLE);
+            }else{
+                editEventBtn.setVisibility(View.INVISIBLE);
+            }
         }else {
             interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_border_24));
         }

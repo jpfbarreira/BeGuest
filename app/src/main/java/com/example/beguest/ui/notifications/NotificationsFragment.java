@@ -405,7 +405,7 @@ public class NotificationsFragment extends Fragment implements
             markerOptions.position(latLng);
 
             Marker mLocationMarker = mMap.addMarker(markerOptions
-                    .icon(BitmapFromVector(getContext(), R.drawable.pin_placeholder_svgrepo_com))); // add the marker to Map
+                    .icon(BitmapFromVector(getContext(), R.drawable.location_icon))); // add the marker to Map
 
             mLocationMarker.setTag(id);
             mLocationMarker.showInfoWindow();
