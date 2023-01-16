@@ -1,7 +1,5 @@
 package com.example.beguest.ui.notifications;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,7 +11,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +24,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.beguest.Adapters.HomeEventsAdapter;
+import com.example.beguest.CreateEventFragments.Event;
+import com.example.beguest.EventActivity;
 import com.example.beguest.MapFilters;
 import com.example.beguest.PlaceAutocompleteAdapter;
 import com.example.beguest.R;
@@ -46,7 +43,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -94,14 +90,18 @@ public class NotificationsFragment extends Fragment implements
     private DatabaseReference reference;
     private RecyclerView recyclerView;
     public static HomeEventsAdapter eventAdpter;
-    List<Marker> AllMarkers = new ArrayList<Marker>();
+    private List<Marker> AllMarkers = new ArrayList<Marker>();
+    private List<String> AlleventID = new ArrayList<String>();
+    private List<Integer> AlleventPosition = new ArrayList<Integer>();
+    private int id;
+    private int position = 0;
+    ArrayList<Event> events = new ArrayList<Event>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        SharedPreferences pref = getActivity().getSharedPreferences("MyPref", 0);
-        // 0 - for private mode
-        distanceFilter = pref.getInt("distance_progress", 15);
+        NotificationsViewModel notificationsViewModel =
+                new ViewModelProvider(this).get(NotificationsViewModel.class);
 
         IntentFilter filter = new IntentFilter("data");
         BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -227,20 +227,49 @@ public class NotificationsFragment extends Fragment implements
                 mapView.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
-                        if (location != null) {
 
-                            mMap = googleMap;
-                            googleMap.setMapStyle(new MapStyleOptions(getResources()
-                                    .getString(R.string.style_json)));
+                        mMap = googleMap;
+                        googleMap.setMapStyle(new MapStyleOptions(getResources()
+                                .getString(R.string.style_json)));
+
+                        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED
+                                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        mMap.setMyLocationEnabled(true);
+                        if (location != null) {
 
                             userLat = location.getLatitude();
                             userLong = location.getLongitude();
 
                             LatLng latLng = new LatLng(userLat, userLong);
-                            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("lat: "+String.valueOf(userLat) + " long: "+String.valueOf(userLong));
-
-                            googleMap.addMarker(markerOptions);
+                            //MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("lat: "+String.valueOf(userLat) + " long: "+String.valueOf(userLong));
+                            //googleMap.addMarker(markerOptions);
                             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+
+                            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                @Override
+                                public boolean onMarkerClick(Marker marker) {
+                                    int tag = (int)(marker.getTag());
+                                    Event event = events.get(AlleventPosition.get(tag));
+                                    Log.d("position", String.valueOf(tag));
+
+                                    Intent intent = new Intent(getActivity(), EventActivity.class);
+                                    intent.putExtra("Event", event);
+                                    intent.putExtra("EventId", AlleventID.get(tag));
+                                    getActivity().startActivity(intent);
+                                    return true;
+                                }
+                            });
 
                             getEventsLocations();
                         }
@@ -264,6 +293,8 @@ public class NotificationsFragment extends Fragment implements
                 for(DataSnapshot dataSnapshot: snapshot.getChildren()) {
                     String eventID = dataSnapshot.getKey();
                     Log.d("eventID", eventID);
+                    Event event = dataSnapshot.getValue(Event.class);
+                    events.add(event);
 
                     DatabaseReference eventReference = reference.child(eventID);
                     DatabaseReference locationsRef = eventReference.child("location");
@@ -275,7 +306,8 @@ public class NotificationsFragment extends Fragment implements
                                 Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                                 Log.d("location", "Location is: " + map.get("location"));
                             try {
-                                addressToCoords(map.get("location").toString());
+                                addressToCoords(map.get("location").toString(), eventID, position);
+                                position++;
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -286,6 +318,7 @@ public class NotificationsFragment extends Fragment implements
 
                         }
                     });
+
                 }
             }
             @Override
@@ -296,15 +329,15 @@ public class NotificationsFragment extends Fragment implements
 
     }
 
-    public void addressToCoords(String address) throws IOException {
+    public void addressToCoords(String address, String eventID, int position) throws IOException {
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         List<Address> addressList = geocoder.getFromLocationName(address, 1);
         LatLng latLng = new LatLng(addressList.get(0).getLatitude(), addressList.get(0).getLongitude());
         Log.d("latLng is ", latLng.toString());
-        calcDistance(latLng);
+        calcDistance(latLng, eventID, position);
     }
 
-    public void calcDistance(LatLng latLng) {
+    public void calcDistance(LatLng latLng, String eventID, int position) {
         final double AVERAGE_RADIUS_OF_EARTH_KM = 6371;
         double latDistance = Math.toRadians(userLat - latLng.latitude);
         double lngDistance = Math.toRadians(userLong - latLng.longitude);
@@ -321,11 +354,16 @@ public class NotificationsFragment extends Fragment implements
         if(km <= distanceFilter) {
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
-            markerOptions.title("Your title");
-            
+
             Marker mLocationMarker = mMap.addMarker(markerOptions); // add the marker to Map
+            mLocationMarker.setTag(id);
+
             AllMarkers.add(mLocationMarker); // add the marker to array
+            AlleventID.add(eventID);
+            AlleventPosition.add(position);
             Log.d("marker", "Marker added");
+            Log.d("marker", eventID);
+            id++;
         }
     }
 
@@ -334,6 +372,8 @@ public class NotificationsFragment extends Fragment implements
             mLocationMarker.remove();
         }
         AllMarkers.clear();
+        AlleventID.clear();
+        id = 0;
 
     }
 
