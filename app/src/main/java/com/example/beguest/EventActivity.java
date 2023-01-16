@@ -53,6 +53,7 @@ public class EventActivity extends AppCompatActivity {
     private CardView users_registered_cardView;
     private DatabaseReference reference;
     private TextView checkInBtn;
+    private String eventId;
 
     private RecyclerView recyclerView;
     public static RegisteredUsersAdapter userAdpter;
@@ -66,7 +67,7 @@ public class EventActivity extends AppCompatActivity {
         isInterested = false;
         Intent intent = getIntent();
         Event event = (Event) intent.getSerializableExtra("Event");
-        String eventId = intent.getExtras().getString("EventId");
+        eventId = intent.getExtras().getString("EventId");
         Log.d("event id", eventId);
 
         backbtn = findViewById(R.id.back_toAtivity_btn);
@@ -132,7 +133,9 @@ public class EventActivity extends AppCompatActivity {
                 registeredUsers.add(event.creatorId);
 
                 for(DataSnapshot dataSnapshot: snapshot.getChildren()){
-                    String userId = String.valueOf(dataSnapshot.getValue(String.class));
+                    UserPoints userPoints = dataSnapshot.getValue(UserPoints.class);
+
+                    String userId = userPoints.getId();
                     registeredUsers.add(userId);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
                     if(registeredUsers.size()>3){
@@ -160,6 +163,17 @@ public class EventActivity extends AppCompatActivity {
                         isInterested = true;
                         interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_24));
                     }
+
+                    checkInBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(EventActivity.this, DancingActivity.class);
+                            intent.putExtra("UserPoints", userPoints);
+                            startActivityForResult(intent, 1);
+                        }
+                    });
+
+
                 }
                 if (registeredUsers.size() == 1){
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -182,9 +196,9 @@ public class EventActivity extends AppCompatActivity {
                 if (!isInterested){
                     isInterested = true;
                     interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_24));
-//                    HashMap<String, Object> values = new HashMap<>();
-//                    values.put("Registered Users",  String.valueOf(currentUser.getUid()));
-                    registeredUsersRef.child(currentUser.getUid()).setValue(currentUser.getUid());
+                    UserPoints userPoints = new UserPoints(currentUser.getUid(), "0");
+
+                    registeredUsersRef.child(currentUser.getUid()).setValue(userPoints);
 
                 }else {
                     isInterested = false;
@@ -233,13 +247,32 @@ public class EventActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
-        checkInBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(EventActivity.this, DancingActivity.class);
-                startActivity(intent);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                String userCurrentPointsOfEvent = data.getStringExtra("userPoints");
+                DatabaseReference eventReference = reference.child(eventId);
+                DatabaseReference registeredUsersRef = eventReference.child("Registered Users");
+
+                registeredUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            dataSnapshot.getRef().child("points").setValue(userCurrentPointsOfEvent);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
-        });
+        }
     }
 }

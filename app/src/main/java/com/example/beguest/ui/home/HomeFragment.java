@@ -27,6 +27,7 @@ import com.example.beguest.EventActivity;
 import com.example.beguest.R;
 import com.example.beguest.ReadWriteUserDetails;
 import com.example.beguest.SharedViewModel;
+import com.example.beguest.UserPoints;
 import com.example.beguest.databinding.FragmentHomeBinding;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -139,12 +140,34 @@ public class HomeFragment extends Fragment {
 
                     event.setEventID(eventID);
 
-                    if (event.creatorId.equals(currentUser.getUid())){
-                        if(!events.contains(event)){
-                            events.add(event);
-                            recyclerView.setAdapter(eventAdpter);
+                    try {
+                        Date todayDate = new Date();
+                        String todayDateString = todayDate.toString();
+                        SimpleDateFormat inputFormat = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
+                        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yy");
+                        todayDate = inputFormat.parse(todayDateString);
+                        String eventDateString = event.getDate().toString();
+                        Date eventDate = new SimpleDateFormat("dd/MM/yy").parse(eventDateString);
+
+                        int compare = todayDate.compareTo(eventDate);
+
+                        Log.d("eventDate", "eventDate is: " + eventDate);
+                        Log.d("todayDate", "todayDate is: " + todayDate);
+
+                        if(compare < 0) {
+                            if (event.creatorId.equals(currentUser.getUid())){
+                                if(!events.contains(event)){
+                                    events.add(event);
+                                    recyclerView.setAdapter(eventAdpter);
+                                }
+                            }
                         }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
+
+
 
                     DatabaseReference eventReference = reference.child(eventID);
                     DatabaseReference registeredUsersRef = eventReference.child("Registered Users");
@@ -156,7 +179,9 @@ public class HomeFragment extends Fragment {
                             ArrayList<String> usersIdsArray = new ArrayList<>();
                             ArrayList<Integer> userCount = new ArrayList<>();
                             for(DataSnapshot dataSnapshot: snapshot.getChildren()){
-                                String userId = String.valueOf(dataSnapshot.getValue(String.class));
+                                UserPoints userPoints = dataSnapshot.getValue(UserPoints.class);
+
+                                String userId = userPoints.getId();
                                 usersIdsArray.add(userId);
                                 userCount.add(usersIdsArray.size());
                                 Log.d("all users event", String.valueOf(usersIdsArray.size()));
@@ -170,8 +195,9 @@ public class HomeFragment extends Fragment {
                                     }
                                 }
                                 int max = userCount.get(0);
-                                for(int i = 1; i<userCount.size();i++){
-                                    if (max < userCount.get(i)){
+                                for(int i = 0; i<userCount.size();i++){
+
+                                    if (max <= userCount.get(i)){
                                         max = userCount.get(i);
                                         recomendedEvent(event);
 

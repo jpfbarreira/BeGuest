@@ -31,7 +31,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DashboardFragment extends Fragment {
 
@@ -81,8 +84,31 @@ public class DashboardFragment extends Fragment {
                     Event event = dataSnapshot.getValue(Event.class);
                     event.setEventID(eventID);
 
-                    if(!events.contains(event)){
-                        events.add(event);
+                    try {
+                        Date todayDate = new Date();
+                        String todayDateString = todayDate.toString();
+                        SimpleDateFormat inputFormat = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
+                        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yy");
+                        todayDate = inputFormat.parse(todayDateString);
+                        String eventDateString = event.getDate().toString();
+                        Date eventDate = new SimpleDateFormat("dd/MM/yy").parse(eventDateString);
+
+                        int compare = todayDate.compareTo(eventDate);
+
+                        Log.d("eventDate", "eventDate is: " + eventDate);
+                        Log.d("todayDate", "todayDate is: " + todayDate);
+
+                        if(compare < 0) {
+                            Log.d("compare", "compare < 0");
+                            event.setEventID(eventID);
+
+                            if(!events.contains(event)){
+                                events.add(event);
+                            }
+                        }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
                 }
                 eventAdpter.notifyDataSetChanged();
