@@ -233,5 +233,13 @@ public class EventActivity extends AppCompatActivity {
                 }
             }
         });
+
+        checkInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EventActivity.this, DancingActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
