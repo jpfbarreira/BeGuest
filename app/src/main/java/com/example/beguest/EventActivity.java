@@ -46,8 +46,8 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class EventActivity extends AppCompatActivity {
-    private ImageView backbtn, editEventBtn, first_person_photo, second_person_photo, third_person_photo;
-    private MaterialButton interestedBtn;
+    private ImageView backbtn, editEventBtn;
+    private MaterialButton interestedBtn, shareBtn;
     private Boolean isInterested;
     private TextView eventTitleTextView, eventDescriptionTextView, eventLocationTextView, eventDateTextView, users_registered, eventMaxPeopleTextView;
     private CardView users_registered_cardView;
@@ -81,6 +81,7 @@ public class EventActivity extends AppCompatActivity {
         eventMaxPeopleTextView = findViewById(R.id.event_max_people);
         //check in btn
         checkInBtn = findViewById(R.id.check_in_btn);
+        shareBtn = findViewById(R.id.share_btn);
 
         users_registered = findViewById(R.id.users_registered);
         users_registered_cardView = findViewById(R.id.users_registered_cardView);
@@ -88,6 +89,13 @@ public class EventActivity extends AppCompatActivity {
         eventTitleTextView.setText(event.title);
         eventDescriptionTextView.setText(event.description);
         eventLocationTextView.setText(event.location);
+
+        Uri uri = getIntent().getData();
+        if(uri!=null){
+            String path = uri.toString();
+            Toast.makeText(EventActivity.this, "path = "+ path, Toast.LENGTH_SHORT).show();
+        }
+
         if (event.maxPeople != ""){
             eventMaxPeopleTextView.setText(String.valueOf(event.maxPeople));
             eventMaxPeopleTextView.setVisibility(View.VISIBLE);
@@ -218,8 +226,10 @@ public class EventActivity extends AppCompatActivity {
         });
 
         if (Objects.equals(event.creatorId, currentUser.getUid())){
-            interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_24));
-            interestedBtn.setClickable(false);
+//            interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_24));
+//            interestedBtn.setClickable(false);
+            interestedBtn.setVisibility(View.INVISIBLE);
+            shareBtn.setVisibility(View.VISIBLE);
 
             if (checkInBtn.getVisibility() != View.VISIBLE){
                 editEventBtn.setVisibility(View.VISIBLE);
@@ -228,6 +238,7 @@ public class EventActivity extends AppCompatActivity {
             }
         }else {
             interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_border_24));
+            shareBtn.setVisibility(View.INVISIBLE);
         }
 
         backbtn.setOnClickListener(new View.OnClickListener() {
@@ -245,6 +256,19 @@ public class EventActivity extends AppCompatActivity {
                     intent1.putExtra("usersRegistered", registeredUsers);
                     startActivity(intent1);
                 }
+            }
+        });
+
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(Intent.ACTION_SEND);
+                myIntent.setType("text/plain");
+                String body = "I'm Inviting You To My Party, Son Of a Bitch";
+                String sub = "BeGuest Event";
+                myIntent.putExtra(Intent.EXTRA_SUBJECT,sub);
+                myIntent.putExtra(Intent.EXTRA_TEXT,body);
+                startActivity(Intent.createChooser(myIntent, "Share Using"));
             }
         });
     }

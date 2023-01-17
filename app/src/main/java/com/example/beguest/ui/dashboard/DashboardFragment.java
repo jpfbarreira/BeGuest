@@ -35,6 +35,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
 
@@ -103,7 +104,9 @@ public class DashboardFragment extends Fragment {
                             event.setEventID(eventID);
 
                             if(!events.contains(event)){
-                                events.add(event);
+                                if (!Objects.equals(event.privacy, "Private")){
+                                    events.add(event);
+                                }
                             }
                         }
 

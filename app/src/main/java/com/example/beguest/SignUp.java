@@ -185,7 +185,7 @@ public class SignUp extends AppCompatActivity {
                             DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app").getReference("Registered Users");
 
                             //save user information into Realtime database
-                            ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(username, points, instagram, twitter, registedEvents);
+                            ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(username, points, instagram, twitter, email, registedEvents);
 
                                 reference.child(user.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -255,7 +255,7 @@ public class SignUp extends AppCompatActivity {
                                                 DatabaseReference reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app").getReference("Registered Users");
 
                                                 //save user information into Realtime database
-                                                ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(account.getDisplayName(), points, instagram, twitter, userRegistedEvents);
+                                                ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(account.getDisplayName(), points, instagram, twitter, account.getEmail(), userRegistedEvents);
                                                 reference.child(user.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {

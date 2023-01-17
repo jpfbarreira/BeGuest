@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.text.Editable;
 import android.text.Layout;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,10 @@ import com.skydoves.powerspinner.OnSpinnerItemSelectedListener;
 import com.skydoves.powerspinner.PowerSpinnerView;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class Create_Event_Fragment1 extends Fragment {
@@ -197,10 +200,19 @@ public class Create_Event_Fragment1 extends Fragment {
         String myFormat = "dd/MM/yy";
         SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.UK);
         eventDate = dateFormat.format(calendar.getTime());
-        eventDateTextView.setText(dateFormat.format(calendar.getTime()));
+        Date date = new Date();
+        String currentDate = dateFormat.format(date);
+
+        if(eventDate.compareTo(currentDate) > 0 || eventDate.compareTo(currentDate) == 0){
+            eventDateTextView.setText(dateFormat.format(calendar.getTime()));
+        }else{
+            Toast.makeText(getActivity(), "Invalid Date",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showTimePicker() {
+
         Calendar mcurrentTime = Calendar.getInstance();
         int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
         int minute = mcurrentTime.get(Calendar.MINUTE);

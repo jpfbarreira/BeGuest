@@ -196,11 +196,11 @@ public class HomeFragment extends Fragment {
                                 }
                                 int max = userCount.get(0);
                                 for(int i = 0; i<userCount.size();i++){
-
+                                    Log.d("imag", String.valueOf(max));
                                     if (max <= userCount.get(i)){
                                         max = userCount.get(i);
                                         recomendedEvent(event);
-
+                                        Log.d("imhere", String.valueOf(max));
                                         recommendedEventBtn.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
@@ -226,6 +226,7 @@ public class HomeFragment extends Fragment {
                     //recommmended event
                     //Event with most people registred in the area gets the recommended position, for now it's the event with this title
 
+
                 }
                 eventAdpter.notifyDataSetChanged();
             }
@@ -248,6 +249,7 @@ public class HomeFragment extends Fragment {
                 ReadWriteUserDetails readUserDetails = snapshot.getValue(ReadWriteUserDetails.class);
 
                 if(readUserDetails != null){
+
                     username = readUserDetails.username;
                     email = currentUser.getEmail();
                     points = readUserDetails.points;
@@ -255,6 +257,7 @@ public class HomeFragment extends Fragment {
                     textViewUsername.setText(username);
                     sharedViewModel.setData(username, email, String.valueOf(points), userProfilePic);
                 }
+
             }
 
             @Override

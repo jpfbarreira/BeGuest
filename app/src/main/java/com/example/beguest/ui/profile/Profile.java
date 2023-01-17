@@ -68,6 +68,7 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Proxy;
 import java.util.Locale;
@@ -252,10 +253,15 @@ public class Profile extends Fragment {
         private void UploadProfilePic() {
         if(uriImage != null){
             //save image in database with id of user
+            StorageReference getImage = FirebaseStorage.getInstance().getReference("User Pics/" + auth.getCurrentUser().getUid() + ".jpg");
+            if (getImage != null){
+                getImage.delete();
+            }
             StorageReference fileReference = storageReference.child(auth.getCurrentUser().getUid() + "."
                     + getFileExtension(uriImage));
 
             //upload to storage
+
             fileReference.putFile(uriImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
