@@ -3,15 +3,21 @@ package com.example.beguest;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +32,15 @@ import com.example.beguest.Adapters.HomeEventsAdapter;
 import com.example.beguest.Adapters.RegisteredUsersAdapter;
 import com.example.beguest.CreateEventFragments.Event;
 import com.example.beguest.ui.home.HomeFragment;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -40,6 +55,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class EventActivity extends AppCompatActivity {
@@ -59,6 +76,10 @@ public class EventActivity extends AppCompatActivity {
     private TextView checkInBtn;
     private String eventId;
     private int aux = 0;
+    FusedLocationProviderClient client;
+    private double userLat;
+    private double userLong;
+    private String eventLocation;
 
     private RecyclerView recyclerView;
     public static RegisteredUsersAdapter userAdpter;
@@ -69,6 +90,7 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
+        client = LocationServices.getFusedLocationProviderClient(EventActivity.this);
         isInterested = false;
         Intent intent = getIntent();
 
@@ -91,7 +113,9 @@ public class EventActivity extends AppCompatActivity {
         eventMaxPeopleTextView = findViewById(R.id.event_max_people);
         //check in btn
         checkInBtn = findViewById(R.id.check_in_btn);
+        checkInBtn.setVisibility(View.INVISIBLE);
         shareBtn = findViewById(R.id.share_btn);
+
 
         users_registered = findViewById(R.id.users_registered);
         users_registered_cardView = findViewById(R.id.users_registered_cardView);
@@ -99,6 +123,9 @@ public class EventActivity extends AppCompatActivity {
         eventTitleTextView.setText(event.title);
         eventDescriptionTextView.setText(event.description);
         eventLocationTextView.setText(event.location);
+        eventLocation = event.location;
+
+        getMyLocation();
 
         if (event.maxPeople != ""){
             eventMaxPeopleTextView.setText(String.valueOf(event.maxPeople));
@@ -211,6 +238,7 @@ public class EventActivity extends AppCompatActivity {
                     UserPoints userPoints = new UserPoints(currentUser.getUid(), "0");
 
                     registeredUsersRef.child(currentUser.getUid()).setValue(userPoints);
+                    getMyLocation();
 
                 }else {
                     isInterested = false;
@@ -310,4 +338,79 @@ public class EventActivity extends AppCompatActivity {
             }
         }
     }
+
+    //OBTER LOCALIZAÇÃO ACTUAL DO UTILIZADOR
+    public void getMyLocation() {
+
+
+        if (ActivityCompat.checkSelfPermission(EventActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(EventActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+
+        Task<Location> task = client.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(final Location location) {
+
+                        if (ActivityCompat.checkSelfPermission(EventActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED
+                                && ActivityCompat.checkSelfPermission(EventActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED) {
+
+                            return;
+                        }
+                        if (location != null) {
+
+                            userLat = location.getLatitude();
+                            userLong = location.getLongitude();
+
+                            LatLng latLng = new LatLng(userLat, userLong);
+                            Log.d("LOCALIZAÇÃO UTILIZADOR", String.valueOf(latLng));
+
+                            try {
+                                addressToCoords(eventLocation);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                });
+            }
+
+    //Distância utilizador até ao evento
+    public void calcDistance(LatLng latLng) {
+        final double AVERAGE_RADIUS_OF_EARTH_KM = 6371;
+        double latDistance = Math.toRadians(userLat - latLng.latitude);
+        double lngDistance = Math.toRadians(userLong - latLng.longitude);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(latLng.latitude))
+                * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double m = Math.round(AVERAGE_RADIUS_OF_EARTH_KM * c * 1000);
+
+        Log.d("calcDistance", "Distance is " + String.valueOf(m));
+
+        if(c <= 500 && isInterested) {
+            checkInBtn.setVisibility(View.VISIBLE);
+            Log.d("VISIBILIDADDE","SIM");
+
+
+        }
+    }
+
+    public void addressToCoords(String address) throws IOException {
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        List<Address> addressList = geocoder.getFromLocationName(address, 1);
+        LatLng latLng = new LatLng(addressList.get(0).getLatitude(), addressList.get(0).getLongitude());
+        Log.d("latLng is ", latLng.toString());
+        Log.d("addressoCoords", String.valueOf(latLng));
+        calcDistance(latLng);
+    }
+
+
 }
