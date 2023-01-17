@@ -16,11 +16,11 @@
     <string name="second_slide_desc">Im hella straight, and I just got paid, Imma hit the club, and Imma get laid</string>
     <string name="third_slide_desc">Yes, madam, I am drunk. But in the morning I will be sober and you will still be ugly.\nWinston Churchill</string>
 
-  <string name="yes">Yes</string>
-  <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 
-  <!--Buttons-->
+    <!--Buttons-->
     <string name="skip_btn">Skip</string>
     <string name="next_btn">Next</string>
     <string name="back_btn">Back</string>

@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class EventActivity extends AppCompatActivity {
@@ -54,6 +58,7 @@ public class EventActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private TextView checkInBtn;
     private String eventId;
+    private int aux = 0;
 
     private RecyclerView recyclerView;
     public static RegisteredUsersAdapter userAdpter;
@@ -66,6 +71,11 @@ public class EventActivity extends AppCompatActivity {
 
         isInterested = false;
         Intent intent = getIntent();
+
+        if(intent.getExtras().getString("from")!=null) {
+            aux = 1;
+        }
+
         Event event = (Event) intent.getSerializableExtra("Event");
         eventId = intent.getExtras().getString("EventId");
         Log.d("event id", eventId);
@@ -89,12 +99,6 @@ public class EventActivity extends AppCompatActivity {
         eventTitleTextView.setText(event.title);
         eventDescriptionTextView.setText(event.description);
         eventLocationTextView.setText(event.location);
-
-        Uri uri = getIntent().getData();
-        if(uri!=null){
-            String path = uri.toString();
-            Toast.makeText(EventActivity.this, "path = "+ path, Toast.LENGTH_SHORT).show();
-        }
 
         if (event.maxPeople != ""){
             eventMaxPeopleTextView.setText(String.valueOf(event.maxPeople));
@@ -244,7 +248,14 @@ public class EventActivity extends AppCompatActivity {
         backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                if(aux == 1) {
+                    Log.d("auxReceive", "Recebeu aux2");
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    aux = 0;
+                    startActivity(i);
+                } else {
+                    onBackPressed();
+                }
             }
         });
 
