@@ -131,7 +131,7 @@
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/textInputLayoutType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -140,25 +140,39 @@
         android:background="@drawable/rounded_borders_no_color"
         android:backgroundTint="#272727"
         android:focusable="false"
-        android:hint="Event Tags*"
         android:textColorHint="#6A6A6A"
         app:boxStrokeWidth="0dp"
+        android:padding="15dp"
         app:boxStrokeWidthFocused="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description_label">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/event_tags_field"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/event_tags_string"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_borders_no_color"
-            android:backgroundTint="#272727"
-            android:focusable="false"
             android:fontFamily="@font/poppins_light"
-            android:textColor="@color/white" />
+            android:text="Events Tags"
+            android:textColor="#6A6A6A"
+            android:textSize="16dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/event_tags"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <com.google.android.material.textfield.TextInputLayout

@@ -30,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.example.beguest.Adapters.EventAdapter;
 import com.example.beguest.Adapters.HomeEventsAdapter;
 import com.example.beguest.Adapters.RegisteredUsersAdapter;
+import com.example.beguest.Adapters.TagsAdapter;
 import com.example.beguest.CreateEventFragments.Event;
 import com.example.beguest.ui.home.HomeFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -81,7 +82,7 @@ public class EventActivity extends AppCompatActivity {
     private double userLong;
     private String eventLocation;
 
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerView, tagsRecycleView;;
     public static RegisteredUsersAdapter userAdpter;
 
 
@@ -110,6 +111,7 @@ public class EventActivity extends AppCompatActivity {
         eventDateTextView = findViewById(R.id.event_time);
         editEventBtn = findViewById(R.id.edit_event_btn);
         recyclerView = findViewById(R.id.users_recycle_view);
+        tagsRecycleView = findViewById(R.id.event_tags_recycle_view);
         eventMaxPeopleTextView = findViewById(R.id.event_max_people);
         //check in btn
         checkInBtn = findViewById(R.id.check_in_btn);
@@ -117,13 +119,33 @@ public class EventActivity extends AppCompatActivity {
         shareBtn = findViewById(R.id.share_btn);
 
 
+
         users_registered = findViewById(R.id.users_registered);
         users_registered_cardView = findViewById(R.id.users_registered_cardView);
         //setTexts
         eventTitleTextView.setText(event.title);
-        eventDescriptionTextView.setText(event.description);
+        if (!Objects.equals(event.description, "")){
+            eventDescriptionTextView.setText(event.description);
+        }else {
+            eventDescriptionTextView.setVisibility(View.GONE);
+
+        }
         eventLocationTextView.setText(event.location);
+
         eventLocation = event.location;
+
+
+
+        if (event.arrayTags != null){
+            if (event.arrayTags.size() > 0){
+                tagsRecycleView.setVisibility(View.VISIBLE);
+                tagsRecycleView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+                TagsAdapter tagsAdapter = new TagsAdapter(this, event.arrayTags);
+                tagsRecycleView.setAdapter(tagsAdapter);
+            }else {
+                tagsRecycleView.setVisibility(View.GONE);
+            }
+        }
 
         getMyLocation();
 
@@ -264,9 +286,11 @@ public class EventActivity extends AppCompatActivity {
             shareBtn.setVisibility(View.VISIBLE);
 
             if (checkInBtn.getVisibility() != View.VISIBLE){
+                Log.d("auxReceive", "Recebeu aux2");
                 editEventBtn.setVisibility(View.VISIBLE);
             }else{
                 editEventBtn.setVisibility(View.INVISIBLE);
+                Log.d("arraytags", "Im h3ere");
             }
         }else {
             interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_border_24));
@@ -277,7 +301,7 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(aux == 1) {
-                    Log.d("auxReceive", "Recebeu aux2");
+
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
                     aux = 0;
                     startActivity(i);
@@ -397,8 +421,9 @@ public class EventActivity extends AppCompatActivity {
 
         if(c <= 500 && isInterested) {
             checkInBtn.setVisibility(View.VISIBLE);
-            Log.d("VISIBILIDADDE","SIM");
-
+            editEventBtn.setVisibility(View.INVISIBLE);
+        }else{
+            checkInBtn.setVisibility(View.INVISIBLE);
 
         }
     }

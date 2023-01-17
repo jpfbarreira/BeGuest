@@ -160,7 +160,7 @@
                     android:drawableLeft="@drawable/royal_crown_made_of_triangle_outlines_and_circle_shapes_svgrepo_com"
                     android:drawablePadding="5dp"
                     android:fontFamily="@font/poppins_light"
-                    android:text="Dance, Karaoke, Party"
+                    android:text=""
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"

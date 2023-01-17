@@ -17,16 +17,17 @@ import com.example.beguest.CreateNewEvent;
 import com.example.beguest.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Create_Event_Fragment3 extends Fragment {
     View view;
 
     private Create_Event_ViewModel createEventViewModel;
     private TextView eventName, eventDescription, eventDate, eventTime, eventMaxPeople, eventMinPoints, eventMinAge, eventPrivacy, eventLocation;
-    private String name, date, description, time, minAge, maxPeople, tags, privacy, location;
+    private String name, date, description, time, minAge, maxPeople, privacy, location;
     private TextView eventDescriptionLabel, eventMinPointsLabel, eventMinAgeLabel;
     private Button createEventbtn;
-
+    private ArrayList<String> arrayTags;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -102,21 +103,29 @@ public class Create_Event_Fragment3 extends Fragment {
             }
         });
         createEventViewModel.getEventTags().observe(getViewLifecycleOwner(), item -> {
-            tags = item;
-            if (!TextUtils.isEmpty(item)){
-                eventMinPoints.setText(item);
+            arrayTags = item;
+            if (arrayTags.size() != 0){
+                for (int i = 0; i < item.size(); i++){
+                    if (arrayTags.size() == 1){
+                        eventMinPoints.setText(item.get(i));
+                    }else {
+                        String text = (String) eventMinPoints.getText();
+                        eventMinPoints.setText(text + item.get(i) + ", ");
+
+                    }
+                }
             }else {
-                eventMinPoints.setText("No Minimum Points");
+                eventMinPoints.setText("No Tags");
             }
+            Log.d("MYARRAR", String.valueOf(arrayTags));
         });
 
         createEventbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((CreateNewEvent)getActivity()).registerEvent(name, date, description, time, minAge, maxPeople, tags, privacy, location);
+                ((CreateNewEvent)getActivity()).registerEvent(name, date, description, time, minAge, maxPeople, privacy, location, arrayTags);
             }
         });
-
 
         return view;
     }

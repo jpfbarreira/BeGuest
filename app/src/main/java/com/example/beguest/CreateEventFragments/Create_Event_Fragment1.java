@@ -2,6 +2,9 @@ package com.example.beguest.CreateEventFragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -9,6 +12,8 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.Layout;
@@ -21,10 +26,13 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.beguest.Adapters.HomeEventsAdapter;
+import com.example.beguest.Adapters.TagsAdapter;
 import com.example.beguest.CreateNewEvent;
 import com.example.beguest.R;
 import com.example.beguest.SharedViewModel;
@@ -45,10 +53,15 @@ public class Create_Event_Fragment1 extends Fragment {
     private View view;
 
     private TextInputEditText eventNameTextView, eventDateTextView, eventDescriptionTextView, eventTimeTextView;
-    private TextInputEditText eventMinAgeTextView, eventMaxPeopleTextView, eventTagsTextView;
+    private TextInputEditText eventMinAgeTextView, eventMaxPeopleTextView;
     private String eventName, eventDate, eventDescription, eventTime, eventMinAge, eventMaxPeople, eventPrivacy, eventTags;
     private SwitchCompat switchPrivacyBtn;
     private Button saveDataBtn;
+    private ConstraintLayout eventTagsTextView;
+    //tags
+    private boolean isDanceParty, isKaraoke, isRave, isDisco, isRock,isFunk, isPop, isRap = false;
+    private ArrayList<String> arrayTags;
+    private TagsAdapter tagsAdapter;
 
     private ConstraintLayout tagsBottomSheet;
 
@@ -70,7 +83,8 @@ public class Create_Event_Fragment1 extends Fragment {
         eventTimeTextView = view.findViewById(R.id.event_time);
         eventMinAgeTextView = view.findViewById(R.id.event_minimum_age);
         eventMaxPeopleTextView = view.findViewById(R.id.event_max_people);
-        eventTagsTextView = view.findViewById(R.id.event_tags_field);
+        eventTagsTextView = view.findViewById(R.id.textInputLayoutType);
+        TextView event_tags_string = view.findViewById(R.id.event_tags_string);
 
         tagsBottomSheet = view.findViewById(R.id.tags_bottom_sheet);
         switchPrivacyBtn = view.findViewById(R.id.event_privacy);
@@ -102,7 +116,6 @@ public class Create_Event_Fragment1 extends Fragment {
         eventTimeTextView.addTextChangedListener(textWatcher);
         eventMinAgeTextView.addTextChangedListener(textWatcher);
         eventMaxPeopleTextView.addTextChangedListener(textWatcher);
-        eventTagsTextView.addTextChangedListener(textWatcher);
 
 
         switchPrivacyBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -152,9 +165,149 @@ public class Create_Event_Fragment1 extends Fragment {
                 bottomSheetDialog.setContentView(bottomSheetView);
                 bottomSheetDialog.show();
 
+                arrayTags = new ArrayList<>();
+
+                RecyclerView recyclerView = view.findViewById(R.id.event_tags);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
                 TextView danceTagTextView = bottomSheetDialog.findViewById(R.id.dance_textView);
                 TextView karaokeTagTextView = bottomSheetDialog.findViewById(R.id.karaoke_textView);
                 TextView raveTagTextView = bottomSheetDialog.findViewById(R.id.rave_textView);
+                TextView discoTextView = bottomSheetDialog.findViewById(R.id.disco_textView);
+                TextView rockTagTextView = bottomSheetDialog.findViewById(R.id.rock_textView);
+                TextView funkTagTextView = bottomSheetDialog.findViewById(R.id.funk_textView);
+                TextView popTagTextView = bottomSheetDialog.findViewById(R.id.pop_textView);
+                TextView rapTagTextView = bottomSheetDialog.findViewById(R.id.rap_textView);
+
+                danceTagTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isDanceParty == false){
+                            isDanceParty = true;
+                            arrayTags.add("Dance");
+                            danceTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2e0101")));
+                        }else {
+                            isDanceParty = false;
+                            arrayTags.remove("Dance");
+                            danceTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5c0202")));
+                        }
+                    }
+                });
+                karaokeTagTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isKaraoke == false){
+                            isKaraoke = true;
+                            arrayTags.add("Karaoke");
+                            karaokeTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2e0101")));
+                        }else {
+                            isKaraoke = false;
+                            arrayTags.remove("Karaoke");
+                            karaokeTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5c0202")));
+                        }
+                    }
+                });
+                raveTagTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isRave == false){
+                            isRave = true;
+                            arrayTags.add("Rave");
+                            raveTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2e0101")));
+                        }else {
+                            isRave = false;
+                            arrayTags.remove("Rave");
+                            raveTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5c0202")));
+                        }
+                    }
+                });
+                discoTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isDisco == false){
+                            isDisco = true;
+                            arrayTags.add("Disco");
+                            discoTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2e0101")));
+                        }else {
+                            isDisco = false;
+                            arrayTags.remove("Disco");
+                            discoTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5c0202")));
+                        }
+                    }
+                });
+                rockTagTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isRock == false){
+                            isRock = true;
+                            arrayTags.add("Rock");
+                            rockTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2e0101")));
+                        }else {
+                            isRock = false;
+                            arrayTags.remove("Rock");
+                            rockTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5c0202")));
+                        }
+                    }
+                });
+                funkTagTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isFunk == false){
+                            isFunk = true;
+                            arrayTags.add("Funk");
+                            funkTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2e0101")));
+                        }else {
+                            isFunk = false;
+                            arrayTags.remove("Funk");
+                            funkTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5c0202")));
+                        }
+                    }
+                });
+
+                popTagTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isPop == false){
+                            isPop = true;
+                            arrayTags.add("Pop");
+                            popTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2e0101")));
+                        }else {
+                            isPop = false;
+                            arrayTags.remove("Pop");
+                            popTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5c0202")));
+                        }
+                    }
+                });
+
+                rapTagTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(isRap == false){
+                            isRap = true;
+                            arrayTags.add("Rap");
+                            rapTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2e0101")));
+                        }else {
+                            isRap = false;
+                            arrayTags.remove("Rap");
+                            rapTagTextView.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#5c0202")));
+                        }
+                    }
+                });
+                bottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        Log.d("arraytags", String.valueOf(arrayTags));
+                        if (arrayTags.size() > 0){
+                            event_tags_string.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                            tagsAdapter = new TagsAdapter(getContext(), arrayTags);
+                            recyclerView.setAdapter(tagsAdapter);
+                        }else {
+                            event_tags_string.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                        }
+                    }
+                });
             }
         });
 
@@ -168,7 +321,6 @@ public class Create_Event_Fragment1 extends Fragment {
                 eventMinAge = eventMinAgeTextView.getText().toString();
                 eventMaxPeople = eventMaxPeopleTextView.getText().toString();
                 eventPrivacy = (String) switchPrivacyBtn.getText();
-                eventTags = String.valueOf(eventTagsTextView.getText());
 
                 if (eventName.length() == 0 || eventDate.length() == 0 || eventTime.length() == 0) {
                     if (eventName.length() == 0) {
@@ -183,8 +335,8 @@ public class Create_Event_Fragment1 extends Fragment {
                     eventTimeTextView.setError(null);
                     createEventViewModel.setData(eventName, eventDate, eventDescription, eventTime, eventMinAge,
                             eventMaxPeople,
-                            eventTags,
-                            eventPrivacy);
+                            eventPrivacy,
+                            arrayTags);
                     nextbtn.setVisibility(View.VISIBLE);
                     saveDataBtn.setVisibility(View.INVISIBLE);
                     Toast.makeText(getActivity(), "Data Saved",
@@ -225,4 +377,5 @@ public class Create_Event_Fragment1 extends Fragment {
         }, hour, minute, true);
         timePickerDialog.show();
     }
+
 }
