@@ -159,6 +159,7 @@ public class EventActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yy");
         try {
             Date eventDate = simpleDateFormat.parse(event.date);
+            Log.d("eventday,", event.date);
             String eventDay = String.valueOf(eventDate.getDate());
             int eventMonth = eventDate.getMonth();
             String eventTime = event.time;

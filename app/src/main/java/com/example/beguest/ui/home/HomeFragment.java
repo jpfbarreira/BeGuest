@@ -44,6 +44,7 @@ import com.squareup.picasso.Picasso;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -60,6 +61,7 @@ public class HomeFragment extends Fragment {
     private  int points;
     private Uri userProfilePic;
     private TextView default_profile_pic;
+    final Calendar calendar = Calendar.getInstance();
 
     private TextView recommendedEventTitle, recommendedEventDescription, recommendedEventLocation, recommendedEventDate;
 
@@ -140,33 +142,24 @@ public class HomeFragment extends Fragment {
 
                     event.setEventID(eventID);
 
-                    try {
-                        Date todayDate = new Date();
-                        String todayDateString = todayDate.toString();
-                        SimpleDateFormat inputFormat = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
-                        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yy");
-                        todayDate = inputFormat.parse(todayDateString);
-                        String eventDateString = event.getDate().toString();
-                        Date eventDate = new SimpleDateFormat("dd/MM/yy").parse(eventDateString);
+                    String myFormat = "dd/MM/yy";
+                    SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.UK);
+                    String eventDate = event.date;
+//                    event.date = dateFormat.format(calendar.getTime());
+                    Date date = new Date();
+                    String currentDate = dateFormat.format(date);
 
-                        int compare = todayDate.compareTo(eventDate);
+//                        Log.d("eventDate", "eventDate is: " + eventDate);
+//                        Log.d("todayDate", "todayDate is: " + todayDate);
 
-                        Log.d("eventDate", "eventDate is: " + eventDate);
-                        Log.d("todayDate", "todayDate is: " + todayDate);
-
-                        if(compare < 0) {
-                            if (event.creatorId.equals(currentUser.getUid())){
-                                if(!events.contains(event)){
-                                    events.add(event);
-                                    recyclerView.setAdapter(eventAdpter);
-                                }
+                    if(eventDate.compareTo(currentDate) > 0 || eventDate.compareTo(currentDate) == 0){
+                        if (event.creatorId.equals(currentUser.getUid())){
+                            if(!events.contains(event)){
+                                events.add(event);
+                                recyclerView.setAdapter(eventAdpter);
                             }
                         }
-
-                    } catch (ParseException e) {
-                        e.printStackTrace();
                     }
-
 
 
                     DatabaseReference eventReference = reference.child(eventID);

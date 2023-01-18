@@ -34,7 +34,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 public class DashboardFragment extends Fragment {
@@ -45,6 +47,7 @@ public class DashboardFragment extends Fragment {
     private EventAdapter eventAdpter;
     private DatabaseReference reference;
     private ArrayList<Event> events;
+    final Calendar calendar = Calendar.getInstance();
 
     private ImageView danceParty, discoParty, karaokeParty, raveParty;
 
@@ -83,34 +86,24 @@ public class DashboardFragment extends Fragment {
                     Event event = dataSnapshot.getValue(Event.class);
                     event.setEventID(eventID);
 
-                    try {
-                        Date todayDate = new Date();
-                        String todayDateString = todayDate.toString();
-                        SimpleDateFormat inputFormat = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
-                        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yy");
-                        todayDate = inputFormat.parse(todayDateString);
-                        String eventDateString = event.getDate().toString();
-                        Date eventDate = new SimpleDateFormat("dd/MM/yy").parse(eventDateString);
+                    String myFormat = "dd/MM/yy";
+                    SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.UK);
+                    String eventDate = event.date;
+//                    event.date = dateFormat.format(calendar.getTime());
+                    Log.d("myeventDate", eventDate);
+                    Date date = new Date();
+                    String currentDate = dateFormat.format(date);
 
-                        int compare = todayDate.compareTo(eventDate);
+                    if(eventDate.compareTo(currentDate) > 0 || eventDate.compareTo(currentDate) == 0){
+                        event.setEventID(eventID);
 
-                        Log.d("eventDate", "eventDate is: " + eventDate);
-                        Log.d("todayDate", "todayDate is: " + todayDate);
-
-                        if(compare < 0) {
-                            Log.d("compare", "compare < 0");
-                            event.setEventID(eventID);
-
-                            if(!events.contains(event)){
-                                if (!Objects.equals(event.privacy, "Private")){
-                                    events.add(event);
-                                }
+                        if(!events.contains(event)){
+                            if (!Objects.equals(event.privacy, "Private")){
+                                events.add(event);
                             }
                         }
-
-                    } catch (ParseException e) {
-                        e.printStackTrace();
                     }
+
                 }
                 eventAdpter.notifyDataSetChanged();
             }

@@ -62,6 +62,7 @@ public class Create_Event_Fragment3 extends Fragment {
         createEventViewModel.getEventDate().observe(getViewLifecycleOwner(), item -> {
             date = item;
             eventDate.setText(item);
+            Log.d("myeventDate", date);
         });
         createEventViewModel.getEventTime().observe(getViewLifecycleOwner(), item -> {
             time = item;
@@ -104,7 +105,8 @@ public class Create_Event_Fragment3 extends Fragment {
         });
         createEventViewModel.getEventTags().observe(getViewLifecycleOwner(), item -> {
             arrayTags = item;
-            if (arrayTags.size() != 0){
+
+            if (arrayTags != null && arrayTags.size() != 0  ){
                 for (int i = 0; i < item.size(); i++){
                     if (arrayTags.size() == 1){
                         eventMinPoints.setText(item.get(i));

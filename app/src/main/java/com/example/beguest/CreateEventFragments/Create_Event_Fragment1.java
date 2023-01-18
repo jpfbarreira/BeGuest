@@ -316,6 +316,7 @@ public class Create_Event_Fragment1 extends Fragment {
             public void onClick(View view) {
                 eventName = eventNameTextView.getText().toString();
                 eventDate = eventDateTextView.getText().toString();
+                Log.d("myeventDate", eventDate);
                 eventDescription = eventDescriptionTextView.getText().toString();
                 eventTime = eventTimeTextView.getText().toString();
                 eventMinAge = eventMinAgeTextView.getText().toString();
