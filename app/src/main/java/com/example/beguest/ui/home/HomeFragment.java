@@ -73,6 +73,7 @@ public class HomeFragment extends Fragment {
     public static HomeEventsAdapter eventAdpter;
     private DatabaseReference reference;
     private ArrayList<Event> events;
+    private int max = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -187,10 +188,12 @@ public class HomeFragment extends Fragment {
                                         recyclerView.setAdapter(eventAdpter);
                                     }
                                 }
-                                int max = userCount.get(0);
+
                                 for(int i = 0; i<userCount.size();i++){
                                     Log.d("imag", String.valueOf(max));
+
                                    if (max <= userCount.get(i) && event.privacy.equals("Public")){
+
                                         max = userCount.get(i);
                                         recomendedEvent(event);
                                         Log.d("imhere", String.valueOf(max));
