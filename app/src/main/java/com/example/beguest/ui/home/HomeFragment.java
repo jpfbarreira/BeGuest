@@ -190,7 +190,7 @@ public class HomeFragment extends Fragment {
                                 int max = userCount.get(0);
                                 for(int i = 0; i<userCount.size();i++){
                                     Log.d("imag", String.valueOf(max));
-                                    if (max <= userCount.get(i) && event.privacy.equals("Public")){
+                                   if (max <= userCount.get(i) && event.privacy.equals("Public")){
                                         max = userCount.get(i);
                                         recomendedEvent(event);
                                         Log.d("imhere", String.valueOf(max));

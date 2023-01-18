@@ -310,11 +310,13 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(aux == 1) {
-                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent i = new Intent(EventActivity.this, MainActivity.class);
                     aux = 0;
                     startActivity(i);
+                    finish();
                 } else {
                     onBackPressed();
+                    finish();
                 }
             }
         });
