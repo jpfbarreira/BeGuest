@@ -183,6 +183,12 @@ public class EventActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
 
+        if (currentUser.getUid() == null){
+            Intent intentLog = new Intent(EventActivity.this, Login.class);
+            startActivity(intentLog);
+            finish();
+        }
+
         reference = FirebaseDatabase.getInstance("https://beguest-4daae-default-rtdb.europe-west1.firebasedatabase.app")
                 .getReference("Registered Events");
         DatabaseReference eventReference = reference.child(eventId);
@@ -280,6 +286,8 @@ public class EventActivity extends AppCompatActivity {
             }
         });
 
+
+
         if (Objects.equals(event.creatorId, currentUser.getUid())){
 //            interestedBtn.setIcon(getResources().getDrawable(R.drawable.ic_baseline_star_24));
 //            interestedBtn.setClickable(false);
@@ -302,7 +310,6 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(aux == 1) {
-
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
                     aux = 0;
                     startActivity(i);
@@ -328,7 +335,7 @@ public class EventActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent myIntent = new Intent(Intent.ACTION_SEND);
                 myIntent.setType("text/plain");
-                String body = "I'm Inviting You To My Party, Son Of a Bitch";
+                String body = String.format("http://beguest.com/event/%s", eventId);
                 String sub = "BeGuest Event";
                 myIntent.putExtra(Intent.EXTRA_SUBJECT,sub);
                 myIntent.putExtra(Intent.EXTRA_TEXT,body);
