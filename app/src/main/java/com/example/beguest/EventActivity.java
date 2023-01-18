@@ -427,7 +427,7 @@ public class EventActivity extends AppCompatActivity {
 
         Log.d("calcDistance", "Distance is " + String.valueOf(m));
 
-        if(c <= 500 && isInterested) {
+        if(m <= 500 && isInterested) {
             checkInBtn.setVisibility(View.VISIBLE);
             editEventBtn.setVisibility(View.INVISIBLE);
         }else{
